@@ -25,9 +25,12 @@ export abstract class RenderBasic3dScene implements IRendering, IIteration, IRay
         this.rayMarchStats = rayMarchStats;
     }
 
-    Render(): void {
+    initialize(): void {
         this.surface.setSize(1080, 720, 300);
         this.rayOrigin = new Vector3(0, 0, -2); // in world coordinates. Just behind the xy plane
+    }
+
+    Render(): void {
         this.surface.iterate(this);
     }
 

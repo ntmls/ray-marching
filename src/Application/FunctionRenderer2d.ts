@@ -23,11 +23,13 @@ export abstract class FunctionRenderer2d implements IRendering, IIteration {
     constructor(surface: ISurface) {
         this.surface = surface;
     }   
-
-    Render(): void {
+    initialize(): void {
         this.function = this.createFunction();
         this.contourFunction = new Contours(this.majorContourTick(), this.minorContourTick());
         this.surface.setSize(1080, 720, 1080 / 10);
+    }
+
+    Render(): void {
         this.surface.iterate(this);
     }
     majorContourTick(): number {

@@ -13,12 +13,14 @@ export abstract class FunctionRenderer1d implements IRendering, IIteration {
     constructor(surface: ISurface) {
         this.surface = surface;
     }
+    initialize(): void {
+        this.f = this.createFunction();
+        this.surface.setSize(1080, 720, 1080 / 10);
+    }
 
     abstract createFunction(): Function1d; 
 
     Render(): void {
-        this.f = this.createFunction();
-        this.surface.setSize(1080, 720, 1080 / 10);
         this.surface.iterate(this);
     }
 
