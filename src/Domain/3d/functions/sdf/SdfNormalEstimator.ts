@@ -1,4 +1,5 @@
-import { Vector3 } from "../Vector3";
+import { Vector3 } from "../../Vector3";
+import { Sdf3d } from "./Sdf3d";
 
 export class SdfNormalEstimator {
     public readonly offset: number;

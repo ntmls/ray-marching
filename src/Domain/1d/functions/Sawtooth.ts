@@ -1,5 +1,5 @@
-import { MathUtility } from "../MathUtility";
-import { Function1d } from "./Function1d";
+import { MathUtility } from "../../MathUtility";
+import { Function1d } from "../Function1d";
 
 export class Sawtooth extends Function1d {
     
@@ -31,14 +31,13 @@ export class Sawtooth extends Function1d {
     eval(x: number): number {
         let p = MathUtility.mod2(x, this._period);
         if (p === this._d1) return this._max;
-        var t: number;
+        var t: number = 0;
         if (p < this._d1) { 
             t = p / this._d1;
         } else if (p > this._d1) {
             t = 1 - ((p - this._d1) / this._d2);
         } 
-        return (1 - t) * this._min + t * this._max);
+        return (1 - t) * this._min + t * this._max;
     }
-
 
 }

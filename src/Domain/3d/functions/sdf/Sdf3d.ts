@@ -1,5 +1,5 @@
-import { Translation3 } from "../Translation3";
-import { Vector3, Vector3Transform } from "../Vector3";
+import { Translation3 } from "../../Translation3";
+import { Vector3, Vector3Transform } from "../../Vector3";
 
 export abstract class Sdf3d {
     abstract getDistance(position: Vector3): number

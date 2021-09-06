@@ -2,15 +2,15 @@ import { IIteration } from "../Domain/IIteration";
 import { ISurface } from "../Domain/ISurface";
 import { RgbColor } from "../Domain/RgbColor";
 import { IRendering } from "./IRendering";
-import { Vector2 } from "../Domain/Vector2";
-import { Function1d } from "../Domain/functions1d/Function1d";
-import { IFunction2d } from "../Domain/functions2d/IFunction2d";
-import { Contours } from "../Domain/functions1d/Contours";
+import { Function1d } from "../Domain/1d/Function1d"; 
+import { Contours } from "../Domain/1d/functions/Contours";
+import { Vector2 } from "../Domain/2d/Vector2"; 
+import { EmptyFunction2d, Function2d } from "../Domain/2d/Function2d";
 
 export abstract class FunctionRenderer2d implements IRendering, IIteration {
 
     private readonly surface: ISurface;
-    protected function: IFunction2d;
+    protected function: Function2d;
     private readonly green = RgbColor.Green();
     private readonly greenBlack = RgbColor.mix(RgbColor.Green(), RgbColor.Black(), .25);
     private readonly blue = RgbColor.Blue()
@@ -18,20 +18,24 @@ export abstract class FunctionRenderer2d implements IRendering, IIteration {
     private readonly black = RgbColor.Black();
     protected contourFunction: Function1d;
 
-    abstract createFunction(): IFunction2d; 
+    abstract createFunction(): Function2d; 
     
     constructor(surface: ISurface) {
         this.surface = surface;
+        this.function = new EmptyFunction2d();
+        this.contourFunction = new Contours(1, .1);
     }   
+
     initialize(): void {
         this.function = this.createFunction();
-        this.contourFunction = new Contours(this.majorContourTick(), this.minorContourTick());
         this.surface.setSize(1080, 720, 1080 / 10);
     }
 
     Render(): void {
         this.surface.iterate(this);
     }
+
+    /*
     majorContourTick(): number {
         return 1;
     }
@@ -39,6 +43,7 @@ export abstract class FunctionRenderer2d implements IRendering, IIteration {
     minorContourTick(): number {
        return .1;
     }
+    */
 
     onPixel(x: number, y: number): RgbColor {
         const color = this.annotate(x, y);
@@ -53,7 +58,7 @@ export abstract class FunctionRenderer2d implements IRendering, IIteration {
         }
     }
 
-    annotate(x: number, y: number): RgbColor {
+    annotate(x: number, y: number): RgbColor | null {
         if (Math.abs(x) < .005) return RgbColor.Red();
         if (Math.abs(y) < .005) return RgbColor.Red();
         return null; 

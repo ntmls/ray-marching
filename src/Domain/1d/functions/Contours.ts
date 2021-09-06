@@ -1,5 +1,4 @@
-import { formatDiagnosticsWithColorAndContext } from "typescript";
-import { Function1d } from "./Function1d";
+import { Function1d } from "../Function1d"
 
 export class Contours extends Function1d {
     readonly minorTickCount;

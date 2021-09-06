@@ -1,11 +1,11 @@
 import { ISurface } from "../Domain/ISurface";
 import { RgbColor } from "../Domain/RgbColor";
-import { Vector3 } from "../Domain/Vector3";
 import { IRayMarchStats } from "../Domain/IRayMarchStats";
-import { SphereSdf } from "../Domain/sdf3d/SphereSdf";
-import { XAxisPlane } from "../Domain/sdf3d/XAxisPlane";
 import { DistanceTest } from "../Domain/DistanceTest";
 import { BasicMaterial, RenderBasic3dScene } from "./RenderBasic3dScene";
+import { Vector3 } from "../Domain/3d/Vector3";
+import { SphereSdf } from "../Domain/3d/functions/sdf/SphereSdf";
+import { XAxisPlane } from "../Domain/3d/functions/sdf/XAxisPlane"; 
 
 export class RedBallRendering extends RenderBasic3dScene {
 

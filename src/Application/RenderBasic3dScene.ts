@@ -5,10 +5,10 @@ import { IRayMarcher } from "../Domain/IRayMarcher";
 import { IRayMarchStats } from "../Domain/IRayMarchStats";
 import { ISurface } from "../Domain/ISurface";
 import { RgbColor } from "../Domain/RgbColor";
-import { Sdf3d } from "../Domain/sdf3d/Sdf3d";
-import { Vector3 } from "../Domain/Vector3";
 import { IRendering } from "./IRendering";
-import { SdfNormalEstimator } from "../Domain/sdf3d/SdfNormalEstimator";
+import { Vector3 } from "../Domain/3d/Vector3"; 
+import { Sdf3d } from "../Domain/3d/functions/sdf/Sdf3d";
+import { SdfNormalEstimator } from "../Domain/3d/functions/sdf/SdfNormalEstimator";
 
 export abstract class RenderBasic3dScene implements IRendering, IIteration, IRayMarcher{
 
@@ -23,11 +23,11 @@ export abstract class RenderBasic3dScene implements IRendering, IIteration, IRay
     constructor (surface: ISurface, rayMarchStats: IRayMarchStats) {
         this.surface = surface;
         this.rayMarchStats = rayMarchStats;
+        this.rayOrigin = new Vector3(0, 0, -2); // in world coordinates. Just behind the xy plane
     }
 
     initialize(): void {
         this.surface.setSize(1080, 720, 300);
-        this.rayOrigin = new Vector3(0, 0, -2); // in world coordinates. Just behind the xy plane
     }
 
     Render(): void {
@@ -42,7 +42,7 @@ export abstract class RenderBasic3dScene implements IRendering, IIteration, IRay
         return distanceTest.getColor();
     }
 
-    marchRay(rayOrigin: Vector3, rayDirection: Vector3): DistanceTest {
+    marchRay(rayOrigin: Vector3, rayDirection: Vector3): DistanceTest | null {
         var totalDistance = 0; 
         var step = 1;
         var currentPosition = rayOrigin;

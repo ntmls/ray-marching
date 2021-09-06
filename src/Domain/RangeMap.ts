@@ -1,10 +1,7 @@
 import { Range } from "./Range";
 
 export class RangeMap {
-    static FromValues(sourceFrom: number, sourceTo: number, destFrom: number, destTo: number): RangeMap {
-        return new RangeMap(new Range(sourceFrom, sourceTo), new Range(destFrom, destTo));
-    }
-
+    
     private _source: Range;
     private _dest: Range;
 
@@ -23,8 +20,16 @@ export class RangeMap {
         return this._dest
     }
 
+    static Identity(): RangeMap {
+        return RangeMap.FromValues(0, 1, 0, 1); 
+    }
+
     static FromRanges(source: Range, dest: Range): RangeMap {
         return new RangeMap(source, dest); 
+    }
+
+    static FromValues(sourceFrom: number, sourceTo: number, destFrom: number, destTo: number): RangeMap {
+        return new RangeMap(new Range(sourceFrom, sourceTo), new Range(destFrom, destTo));
     }
 
     get ratio(): number {

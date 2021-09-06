@@ -39,7 +39,7 @@ export class Cache<TKey, TValue> {
         subItems.push(new CacheItem(key, value));  
     }
 
-    retrieve(key: TKey): TValue {
+    retrieve(key: TKey): TValue | null {
         const comparer = this.comparer;
         const index = comparer.getHash(key) % this.size;
         const subItems = this.indices[index]; 

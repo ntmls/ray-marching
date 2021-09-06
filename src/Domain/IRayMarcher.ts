@@ -1,6 +1,6 @@
+import { Vector3 } from "./3d/Vector3";
 import { DistanceTest } from "./DistanceTest";
-import { Vector3 } from "./Vector3";
 
 export interface IRayMarcher {
-    marchRay(rayOrigin: Vector3, rayDirection: Vector3): DistanceTest;
+    marchRay(rayOrigin: Vector3, rayDirection: Vector3): DistanceTest | null;
 }

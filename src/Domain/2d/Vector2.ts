@@ -1,4 +1,4 @@
-import { MathUtility } from "./MathUtility";
+import { MathUtility } from "../MathUtility";
 
 export class Vector2 {
 

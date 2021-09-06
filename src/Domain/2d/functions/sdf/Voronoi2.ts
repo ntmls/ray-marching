@@ -1,8 +1,8 @@
-import { Assertions } from "../Assertions";
-import { MathUtility } from "../MathUtility";
-import { IRandom } from "../Random";
-import { Vector2 } from "../Vector2";
-import { Sdf2d } from "../sdf2d/Sdf2d";
+import { MathUtility } from "../../../MathUtility";
+import { Vector2 } from "../../Vector2";
+import { IRandom } from "../../../Random";
+import { Sdf2d } from "../sdf/Sdf2d";
+import { Assertions } from "../../../Assertions"; 
 
 export class Voronoi2 extends Sdf2d {
     private readonly grid: Array<Array<Vector2>>; 
@@ -45,7 +45,7 @@ export class Voronoi2 extends Sdf2d {
         }
     }
 
-    eval(vector: Vector2): number {
+    getDistance(vector: Vector2): number {
         const scaled = vector.scaleBy(this.invertedCellSize); 
         const v = scaled.floor(); 
         const ix = MathUtility.mod2(v.x, this.xCells); 
@@ -55,9 +55,9 @@ export class Voronoi2 extends Sdf2d {
         const remapped = i.plus(frac); 
 
         var minDistSquared = Number.MAX_VALUE; 
-        var closest: Vector2; 
-        var closestix: number;
-        var closestiy: number;
+        var closest: Vector2 | undefined;  
+        var closestix: number = 0;
+        var closestiy: number = 0;
         for (let dix = -1; dix <= 1; dix++) {
             const indexX = ix + dix;
             for (let diy = -1; diy <= 1; diy ++) {
@@ -73,6 +73,8 @@ export class Voronoi2 extends Sdf2d {
             }
         }
         
+        if (closest === undefined) throw new Error("'closest' is undefined"); 
+
         var result = Number.MAX_VALUE;
         for (let dix = -2; dix <= 2; dix++) {
             for (let diy = -2; diy <= 2; diy ++) {

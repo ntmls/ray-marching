@@ -1,5 +1,4 @@
-import { timeStamp } from "console";
-import { Vector2 } from "../Vector2";
+import { Vector2 } from "../../Vector2";
 import { Sdf2d } from "./Sdf2d";
 
 export class Box2d extends Sdf2d {

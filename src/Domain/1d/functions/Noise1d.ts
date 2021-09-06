@@ -1,5 +1,5 @@
-import { Function1d } from "./Function1d";
-import { MathUtility } from "../../Domain/MathUtility";
+import { Function1d } from "../Function1d";
+import { MathUtility } from "../../../Domain/MathUtility";
 
 export class Noise1d extends Function1d {
     readonly multiplier: number;

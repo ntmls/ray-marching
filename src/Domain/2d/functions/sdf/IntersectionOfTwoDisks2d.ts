@@ -1,5 +1,5 @@
-import { Segment2 } from "../Segment2";
-import { Vector2 } from "../Vector2";
+import { Vector2 } from "../../Vector2";
+import { Segment2 } from "../../Segment2";
 import { Disk2d } from "./Disk2d";
 import { Sdf2d } from "./Sdf2d";
 

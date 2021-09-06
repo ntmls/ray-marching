@@ -1,8 +1,8 @@
-import { Function1d } from "../functions1d/Function1d";
-import { Vector2 } from "../Vector2";
-import { IFunction2d } from "./IFunction2d";
+import { Function1d } from "../1d/Function1d";
+import { Vector2 } from "./Vector2";
 
-export abstract class Function2d implements IFunction2d {
+export abstract class Function2d {
+    
     abstract eval(vector: Vector2): number;
 
     scale(vector: Vector2): Scale2d {
@@ -42,4 +42,10 @@ class Function2dOutputMapper extends Function2d {
         return this.mapper.eval(this.function2d.eval(vector));
     }
 
+}
+
+export class EmptyFunction2d extends Function2d {
+    eval(vector: Vector2): number {
+        throw new Error("Method not implemented.");
+    }
 }

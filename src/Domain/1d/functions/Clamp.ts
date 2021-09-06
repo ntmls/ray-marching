@@ -1,4 +1,4 @@
-import { Function1d } from "./Function1d";
+import { Function1d } from "../Function1d";
 
 export class Clamp extends Function1d {
     private _min: number;

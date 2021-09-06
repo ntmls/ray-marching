@@ -5,13 +5,15 @@ import { RangeMap } from "../Domain/RangeMap";
 
 export class CanvasSurface implements ISurface {
     private canvas: HTMLCanvasElement;
-    private pixelsPerUnit: number;
+    private pixelsPerUnit: number = 0;
     private _xs: Float32Array;
     private _yMap: RangeMap; 
 
     constructor(canvas: HTMLCanvasElement) {
         if (canvas === undefined || canvas === null) throw new Error("'canvas' not defined.");
         this.canvas = canvas;
+        this._xs = new Float32Array(0); 
+        this._yMap = RangeMap.Identity();
     }
 
     iterate(iteration: IIteration): void {
@@ -19,6 +21,7 @@ export class CanvasSurface implements ISurface {
         const width = this.canvas.width;
         const height = this.canvas.height;
         const context = this.canvas.getContext('2d'); 
+        if (context === null) throw new Error("'context' is null"); 
         const data = context.getImageData(0, 0, width, height);
         this.buildWorldCoordinateMap(width, height, this.pixelsPerUnit);
         var xs = this._xs;

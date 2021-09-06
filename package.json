@@ -6,7 +6,8 @@
   "scripts": {
     "start": "./node_modules/.bin/parcel serve ./src/index.html",
     "dev": "./node_modules/.bin/parcel src/index.html",
-    "build": "./node_modules/.bin/parcel build src/index.html"
+    "build": "./node_modules/.bin/parcel build src/index.html", 
+    "check": "tsc --noEmit"
   },
   "keywords": [],
   "author": "",

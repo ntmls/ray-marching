@@ -1,5 +1,4 @@
-import { resolveTripleslashReference } from "typescript";
-import { Vector2 } from "../Vector2";
+import { Vector2 } from "../../Vector2";
 import { Sdf2d } from "./Sdf2d";
 
 export class Disk2d extends Sdf2d {

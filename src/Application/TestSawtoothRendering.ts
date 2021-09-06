@@ -2,8 +2,8 @@ import { IIteration } from "../Domain/IIteration";
 import { ISurface } from "../Domain/ISurface";
 import { RgbColor } from "../Domain/RgbColor";
 import { IRendering } from "./IRendering";
-import { Sawtooth } from "../Domain/functions1d/Sawtooth";
-import { Function1d } from "../Domain/functions1d/Function1d";
+import { Sawtooth } from "../Domain/1d/functions/Sawtooth"; 
+import { Function1d } from "../Domain/1d/Function1d";
 
 export class TestSawtoothRendering implements IRendering, IIteration {
     private readonly surface: ISurface;
@@ -15,9 +15,11 @@ export class TestSawtoothRendering implements IRendering, IIteration {
         this.surface = surface;
         this.f = new Sawtooth(-1, 1, 1, .25);
     }
+    initialize(): void {
+        this.surface.setSize(1080, 720, 1080 / 10);
+    }
 
     Render(): void {
-        this.surface.setSize(1080, 720, 1080 / 10);
         this.surface.iterate(this);
     }
 

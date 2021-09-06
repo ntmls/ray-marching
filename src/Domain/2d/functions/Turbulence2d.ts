@@ -1,14 +1,17 @@
-import { Assertions } from "../Assertions";
+import { Assertions } from "../../Assertions";
+import { Function2d } from "../Function2d";
 import { Vector2 } from "../Vector2";
-import { Function2d } from "./Function2d";
-import { IFunction2d } from "./IFunction2d";
 
 export class Turbulence2d extends Function2d {
     readonly frequency: number;
     readonly octaves: number;
-    private readonly noise: IFunction2d;
+    private readonly noise: Function2d;
     
-    constructor(frequency: number, octaves: number, noise: IFunction2d) {
+    constructor(
+        frequency: number, 
+        octaves: number, 
+        noise: Function2d)  {
+
         super();
         Assertions.notNullOrUndefined(noise, "noise"); 
         Assertions.oneOrGreater(frequency, "frequency");

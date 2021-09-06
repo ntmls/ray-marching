@@ -5,13 +5,19 @@ import { RangeMap } from "../Domain/RangeMap";
 
 export class WorkerSurface implements ISurface {
 
-    private _imageWidth: number;
-    private _imageHeight: number;
-    private _pixelsPerUnit: number; 
-    private _line: number; 
+    private _imageWidth: number = 0; 
+    private _imageHeight: number = 0;
+    private _pixelsPerUnit: number = 0;
+    private _line: number = 0;
     private _yMap: RangeMap;
     private _xs: Float32Array;
     private _data: Uint8ClampedArray;
+
+    constructor() {
+        this._data = new Uint8ClampedArray(0); 
+        this._xs = new Float32Array(0);
+        this._yMap = RangeMap.FromValues(0, 1, 0, 1);
+    }
 
     get width(): number {
         return this._imageWidth;

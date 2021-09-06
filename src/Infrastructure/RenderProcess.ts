@@ -7,11 +7,9 @@ export class RenderProcess {
     private _context: RenderProcessContext; 
 
     constructor(canvas: HTMLCanvasElement, diagnostics: IDiagnostics, maxCorsToUse: number) {
-        this._context = new RenderProcessContext(); 
+        this._context = new RenderProcessContext(canvas, diagnostics); 
         this._context.cpuCount = Math.min(navigator.hardwareConcurrency, maxCorsToUse);  
         this._context.workers = new Array<WorkerContext>(this._context.cpuCount);
-        this._context.canvas = canvas; 
-        this._context.diagnostics = diagnostics;
         this._context.setState(this._context.initialState); 
     }
 
@@ -23,14 +21,14 @@ export class RenderProcess {
 
 class RenderProcessContext {
 
-    cpuCount: number; 
+    cpuCount: number = 0; 
     workers: Array<WorkerContext> = [];
-    startTime: number;
-    lineQueue: Array<number>;
-    canvas: HTMLCanvasElement; 
-    context2d: CanvasRenderingContext2D;
-    imageData: ImageData;
-    diagnostics: IDiagnostics;
+    startTime: number = 0;
+    lineQueue: Array<number> = [];
+    readonly canvas: HTMLCanvasElement; 
+    readonly context2d: CanvasRenderingContext2D; 
+    readonly diagnostics: IDiagnostics;
+    imageData?: ImageData;
 
     private _state: RenderProcessState;
 
@@ -39,6 +37,15 @@ class RenderProcessContext {
     readonly startedState: StartedRenderProcessState = new StartedRenderProcessState(this);
     readonly configuredState: ConfiguredRenderProcessState = new ConfiguredRenderProcessState(this);
     readonly terminatedState: TerminatedRenderProcessState = new TerminatedRenderProcessState(this);
+
+    constructor(canvas: HTMLCanvasElement, diagnostics: IDiagnostics) {
+        this._state = this.initialState;
+        this.canvas = canvas;
+        var ctx2d = canvas.getContext("2d")
+        if (ctx2d === undefined || ctx2d === null) throw new Error("'context2d' is undefined)"); 
+        this.context2d = ctx2d; 
+        this.diagnostics = diagnostics;
+    }
 
     get state(): RenderProcessState {
         return this._state;
@@ -93,11 +100,12 @@ export abstract class RenderProcessState {
     protected renderAnotherLineOrTerminate(workerNumber: number) {
         if (this.context.lineQueue.length > 0) {
             var worker = this.context.workers[workerNumber];
-            var lineNumber = this.context.lineQueue.pop();
+            var lineNumber = this.context.lineQueue.pop() ?? 0;
             worker.renderLine(lineNumber);
         } else {
             if (this.canTerminate()) {
                 this.terminate();
+                if (this.context.imageData === undefined) throw new Error("'imageData' is undefined");
                 this.context.context2d.putImageData(this.context.imageData, 0, 0); 
                 this.context.setState(this.context.terminatedState);
             }
@@ -171,7 +179,8 @@ class StartedRenderProcessState extends RenderProcessState {
     workerInitialized(width: number, height: number, workerNumber: number)  {
         this.context.canvas.width = width;
         this.context.canvas.height = height;
-        this.context.context2d = this.context.canvas.getContext('2d');
+        // this.context.context2d = this.context.canvas.getContext('2d');
+        if (this.context.context2d === undefined) throw new Error("'context2d' is undefined"); 
         this.context.imageData = this.context.context2d.getImageData(0, 0, width, height); 
         this.context.lineQueue = []; 
         for (let i = height - 1; i >= 0; i--) {
@@ -194,6 +203,7 @@ class ConfiguredRenderProcessState extends RenderProcessState {
 
     lineRendered(lineNumber: number, data: Uint8ClampedArray, worker: number) { 
         const offset = lineNumber * this.context.canvas.width * 4;
+        if (this.context.imageData === undefined) throw new Error("'imageData' is undefined");
         this.context.imageData.data.set(data, offset); 
         this.renderAnotherLineOrTerminate(worker); 
     }

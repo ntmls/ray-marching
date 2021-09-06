@@ -1,5 +1,4 @@
-import { Sdf2dRender } from "../../Application/Sdf2dRender";
-import { Vector2 } from "../Vector2";
+import { Vector2 } from "../../Vector2";
 import { Sdf2d } from "./Sdf2d";
 
 export class SdfIntersection2d extends Sdf2d {

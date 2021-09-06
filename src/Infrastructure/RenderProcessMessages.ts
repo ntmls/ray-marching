@@ -12,9 +12,9 @@ export abstract class RenderProcessMessage extends Message{
 }
 
 export class Initialize extends RenderProcessMessage {
-    worker: number;
+    worker: number = 0;;
 }
 
 export class RenderLine extends RenderProcessMessage {
-    lineNumber: number;
+    lineNumber: number = 0;
 }

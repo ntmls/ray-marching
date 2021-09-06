@@ -1,6 +1,6 @@
-import { Assertions } from "../Assertions";
-import { Function2d } from "./Function2d"; 
-import { MathUtility } from "../MathUtility";
+import { Assertions } from "../../Assertions";
+import { MathUtility } from "../../MathUtility";
+import { Function2d } from "../Function2d";
 import { Vector2 } from "../Vector2";
 
 export class ModulatedSineNoise2d extends Function2d {

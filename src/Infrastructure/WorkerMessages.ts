@@ -3,7 +3,7 @@ import { WorkerContext } from "./WorkerState";
 
 export abstract class WorkerMessage extends Message {
 
-    worker: number;
+    worker: number = 0;
 
     static Initialized(worker: number, width: number, height: number) {
         var message =  new Initialized();
@@ -26,11 +26,11 @@ export abstract class WorkerMessage extends Message {
 } 
 
 export class Initialized extends WorkerMessage {
-    width: number;
-    height: number;
+    width: number = 0;;
+    height: number = 0;
 }
 
 export class LineRendered extends WorkerMessage {
-    lineNumber: number;
-    data: Uint8ClampedArray;
+    lineNumber: number = 0;
+    data: Uint8ClampedArray = new Uint8ClampedArray(0); 
 }

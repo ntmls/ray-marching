@@ -30,13 +30,13 @@ export class WorkerContext {
         return this.state.name;
     }
 
-    initialize() {
+    initialize(): void {
         this.diagnostics.logWorkerTransition("initialize", this.index);
         this.state.initialize();
     }
 
 
-    renderLine(lineNumber: number) {
+    renderLine(lineNumber: number): void {
         this.diagnostics.logWorkerTransition("renderLine", this.index);
         this.state.renderLine(lineNumber);
     }
@@ -46,12 +46,12 @@ export class WorkerContext {
         this.state.lineRendered(lineNumber); 
     }
 
-    terminate() {
+    terminate(): void {
         this.diagnostics.logWorkerTransition("terminate", this.index);
         this.worker.terminate();
     }
 
-    initialized() {
+    initialized(): void {
         this.diagnostics.logWorkerTransition("initialized", this.index);
         this.state.initialized();
     }

@@ -1,13 +1,13 @@
+import { Vector3 } from "./3d/Vector3";
 import { IMaterial } from "./IMaterial";
 import { RgbColor } from "./RgbColor";
-import { Vector3 } from "./Vector3";
 
 export class DistanceTest {
     public readonly distance: number;
     private readonly material: IMaterial;
-    private _rayOrigin: Vector3;
-    private _rayDirection: Vector3;
-    private _position: Vector3; //purposefully allow position to be updated after this has been created - performance.
+    private _rayOrigin!: Vector3;
+    private _rayDirection!: Vector3;
+    private _position!: Vector3; //purposefully allow position to be updated after this has been created - performance.
 
     constructor(distance: number, material: IMaterial) {
         this.material = material;
@@ -33,3 +33,14 @@ export class DistanceTest {
     }
 
 }
+/* TODO: Introduce Ray
+export class Ray {
+    private readonly _origin: Vector3;
+    private readonly _direction: Vector3;
+
+    constructor(origin: Vector3, direction: Vector3) {
+        this._origin = origin;
+        this._direction = direction;
+    }
+}
+*/
