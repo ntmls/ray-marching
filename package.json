@@ -6,14 +6,21 @@
   "scripts": {
     "start": "./node_modules/.bin/parcel serve ./src/index.html",
     "dev": "./node_modules/.bin/parcel src/index.html",
-    "build": "./node_modules/.bin/parcel build src/index.html", 
-    "check": "tsc --noEmit"
+    "build": "./node_modules/.bin/parcel build src/index.html",
+    "check": "tsc --noEmit",
+    "test": "mocha --require ts-node/register test/**/*.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/chai": "^4.2.21",
+    "@types/mocha": "^9.0.0",
+    "chai": "^4.3.4",
+    "mocha": "^9.1.1",
     "parcel-bundler": "^1.12.5",
+    "ts-node": "^10.2.1",
     "typescript": "^4.3.5"
-  }
+  },
+  "dependencies": {}
 }
