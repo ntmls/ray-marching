@@ -1,4 +1,4 @@
-import { Vector3 } from "../../Vector3";
+import { Point3 } from "../../Point3";
 import { Sdf3d } from "./Sdf3d";
 
 export class SphereSdf extends Sdf3d {
@@ -7,7 +7,7 @@ export class SphereSdf extends Sdf3d {
     private readonly z: number;
     private readonly radius: number;
     
-    constructor(center: Vector3, radius: number) {
+    constructor(center: Point3, radius: number) {
         super();
         this.x = center.x;
         this.y = center.y;
@@ -15,10 +15,7 @@ export class SphereSdf extends Sdf3d {
         this.radius = radius;
     }
 
-    getDistance(position: Vector3): number {
-        /* --- un-optimized
-        return position.distanceFrom(this.center) - this.radius;
-        */
+    getDistance(position: Point3): number {
         const vx = position.x - this.x; 
         const vy = position.y - this.y;
         const vz = position.z - this.z;

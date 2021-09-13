@@ -1,4 +1,6 @@
-export class Vector3 {
+import { IVector } from "../IVector";
+
+export class Vector3 implements IVector<Vector3> {
 
     public readonly x: number;
     public readonly y: number;
@@ -9,7 +11,6 @@ export class Vector3 {
         this.y = y;
         this.z = z;
     }
-
     static FromX(x: number): Vector3 {
         return new Vector3(x, 0, 0); 
     }
@@ -20,6 +21,18 @@ export class Vector3 {
 
     static FromZ(z: number): Vector3 {
         return new Vector3(0, 0, z); 
+    }
+
+    get componentCount(): number {
+        return 3;
+    }
+    
+    component(index: number): number {
+        throw new Error("Method not implemented.");
+    }
+
+    scaleByVector(vector: Vector3): Vector3 {
+        throw new Error("Method not implemented.");
     }
 
     get magnitude(): number {
@@ -59,8 +72,4 @@ export class Vector3 {
         return new Vector3(-this.x, -this.y, -this.z);
     }
 
-}
-
-export interface Vector3Transform {
-    transform(vector: Vector3): Vector3; 
 }
