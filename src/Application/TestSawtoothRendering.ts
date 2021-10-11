@@ -6,20 +6,21 @@ import { Sawtooth } from "../Domain/1d/functions/Sawtooth";
 import { Function1d } from "../Domain/1d/Function1d";
 
 export class TestSawtoothRendering implements IRendering, IIteration {
-    private readonly surface: ISurface;
     private readonly f: Function1d; 
     private greaterThan = RgbColor.White();
     private lessThan = RgbColor.Black();
+    private surface!: ISurface;
     
-    constructor(surface: ISurface) {
-        this.surface = surface;
+    constructor() {
         this.f = new Sawtooth(-1, 1, 1, .25);
     }
-    initialize(): void {
-        this.surface.setSize(1080, 720, 1080 / 10);
+
+    initialize(surface: ISurface): void {
+        this.surface = surface;
+        surface.setSize(1080, 720, 1080 / 10);
     }
 
-    Render(): void {
+    render(): void {
         this.surface.iterate(this);
     }
 

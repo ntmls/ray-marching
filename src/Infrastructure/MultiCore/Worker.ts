@@ -1,11 +1,6 @@
-import { RedBallRendering } from "../Application/RedBallRendering";
-import { RenderIntersectionOfDisks2d } from "../Application/RenderIntersectionOfDisks2d";
-import { RenderRepeatOnY2d } from "../Application/RenderRepeatOnY2d"; 
-import { RenderCapsule2d } from "../Application/RenderCapsule2d";
-import { RenderTurbulence } from "../Application/RenderTurbulence";
-import { RenderNoise1d } from "../Application/RenderNoise1d";
 
-import { RayMarchStats } from "../Domain/RayMarchStats";
+import { RedBallRendering } from "../../Application/RedBallRendering";
+import { RayMarchStats } from "../../Domain/RayMarchStats";
 import { Message } from "./Message";
 import { Initialize, RenderLine } from "./RenderProcessMessages";
 import { WorkerMessage } from "./WorkerMessages";
@@ -19,7 +14,7 @@ const stats = new RayMarchStats();
 //let renderer = new RenderNoise1d(surface); 
 //let renderer = new TestSawtoothRendering(surface); 
 
-let renderer = new RedBallRendering(surface, stats); 
+let renderer = new RedBallRendering(stats); 
 
 //let renderer = new RenderIntersectionOfDisks2d(surface); 
 //let renderer = new RenderRepeatOnY2d(surface);
@@ -36,7 +31,7 @@ self.addEventListener("message", (event: MessageEvent) => {
     if (message.type === "initialize") {
         const initialize: Initialize = event.data;
         worker = initialize.worker
-        renderer.initialize();
+        renderer.initialize(surface);
         context.postMessage(WorkerMessage.Initialized(worker, surface.width, surface.height));
         return;
     }
@@ -44,7 +39,7 @@ self.addEventListener("message", (event: MessageEvent) => {
     if (message.type === "RenderLine") {
         const renderLine: RenderLine = event.data;
         surface.setLine(renderLine.lineNumber); 
-        renderer.Render(); 
+        renderer.render(); 
         const data = surface.data; 
         context.postMessage(WorkerMessage.LineRendered(worker, renderLine.lineNumber, data)); 
         return;

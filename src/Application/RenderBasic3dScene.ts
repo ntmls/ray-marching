@@ -14,25 +14,25 @@ import { Ray } from "../Domain/3d/Ray";
 
 export abstract class RenderBasic3dScene implements IRendering, IIteration, IRayMarcher{
 
-    private readonly surface: ISurface;
     private rayMarchStats: IRayMarchStats;
     private rayOrigin: Point3;
     private minDist: number = .01;
     private maxDist: number = 50;
     private maxSteps: number = 300;
     private background = RgbColor.White();
+    private surface!: ISurface;
 
-    constructor (surface: ISurface, rayMarchStats: IRayMarchStats) {
-        this.surface = surface;
+    constructor (rayMarchStats: IRayMarchStats) {
         this.rayMarchStats = rayMarchStats;
         this.rayOrigin = new Point3(0, 0, -2); // in world coordinates. Just behind the xy plane
     }
 
-    initialize(): void {
-        this.surface.setSize(1080, 720, 300);
+    initialize(surface: ISurface): void {
+        this.surface = surface; 
+        surface.setSize(1080, 720, 300);
     }
 
-    Render(): void {
+    render(): void {
         this.surface.iterate(this);
     }
 
@@ -53,6 +53,7 @@ export abstract class RenderBasic3dScene implements IRendering, IIteration, IRay
         var maxSteps = this.maxSteps;
         var maxDist = this.maxDist; 
         var distanceTest: DistanceTest; 
+        var surface!: ISurface;
 
         while(true)  {
             distanceTest = this.getDistance(currentPosition);

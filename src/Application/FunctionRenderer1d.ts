@@ -5,23 +5,20 @@ import { IRendering } from "./IRendering";
 import { Function1d } from "../Domain/1d/Function1d";
 
 export abstract class FunctionRenderer1d implements IRendering, IIteration {
-    private readonly surface: ISurface;
     private f!: Function1d; 
     private greaterThan = RgbColor.White();
     private lessThan = RgbColor.Black();
-    
-    constructor(surface: ISurface) {
+    private surface!: ISurface; 
+
+    protected abstract createFunction(): Function1d; 
+
+    initialize(surface: ISurface): void {
         this.surface = surface;
-    }
-
-    initialize(): void {
         this.f = this.createFunction();
-        this.surface.setSize(1080, 720, 1080 / 10);
+        surface.setSize(1080, 720, 1080 / 10);
     }
 
-    abstract createFunction(): Function1d; 
-
-    Render(): void {
+    render(): void {
         this.surface.iterate(this);
     }
 

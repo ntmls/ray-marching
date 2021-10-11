@@ -10,10 +10,6 @@ export class RenderIntersectionOfDisks2d extends FunctionRenderer2d {
 
     private concreteSdf!: IntersectionOfTwoDisks2d; 
 
-    constructor(surface: ISurface) {
-        super(surface);
-    }
-
     createFunction(): Function2d {
         const disk1 = new Disk2d(new Vector2(-1, -.2), 2);
         const disk2 = new Disk2d(new Vector2(1.1, .3), 1.5);

@@ -1,8 +1,8 @@
-import { Initialized, LineRendered, WorkerMessage } from "./WorkerMessages";
-import { WorkerContext } from "./WorkerState";
 import { IDiagnostics } from "./IDiagnostics";
+import { Initialized, LineRendered, WorkerMessage } from "./MultiCore/WorkerMessages";
+import { WorkerContext } from "./MultiCore/WorkerState";
 
-export class RenderProcess {
+export class MultiCoreRenderProcess {
 
     private _context: RenderProcessContext; 
 
@@ -158,7 +158,7 @@ class InitialRenderProcessState extends RenderProcessState {
     start(): void {
         this.context.startTime = Date.now();
         for (let i = 0; i < this.context.cpuCount; i++) {
-            const worker = new Worker("Worker.ts");
+            const worker = new Worker("./MultiCore/Worker.ts");
             worker.onmessage = (event: MessageEvent) => {
                 this.context.handleMessage(event); 
             } 

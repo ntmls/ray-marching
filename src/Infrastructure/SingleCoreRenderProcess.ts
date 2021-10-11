@@ -1,19 +1,27 @@
+import { IRendering } from "../Application/IRendering";
 import { IIteration } from "../Domain/IIteration";
 import { ISurface } from "../Domain/ISurface";
 import { Range } from "../Domain/Range";
 import { RangeMap } from "../Domain/RangeMap";
 
-export class CanvasSurface implements ISurface {
+export class SingleCoreRenderProcess implements ISurface {
     private canvas: HTMLCanvasElement;
     private pixelsPerUnit: number = 0;
     private _xs: Float32Array;
     private _yMap: RangeMap; 
+    private readonly _rendering: IRendering; 
 
-    constructor(canvas: HTMLCanvasElement) {
+    constructor(canvas: HTMLCanvasElement, rendering: IRendering) {
         if (canvas === undefined || canvas === null) throw new Error("'canvas' not defined.");
         this.canvas = canvas;
         this._xs = new Float32Array(0); 
         this._yMap = RangeMap.Identity();
+        this._rendering = rendering; 
+    }
+
+    start() {
+        this._rendering.initialize(this); 
+        this._rendering.render(); 
     }
 
     iterate(iteration: IIteration): void {

@@ -1,7 +1,7 @@
-import { IIteration } from "../Domain/IIteration";
-import { ISurface } from "../Domain/ISurface";
-import { Range } from "../Domain/Range";
-import { RangeMap } from "../Domain/RangeMap";
+import { IIteration } from "../../Domain/IIteration";
+import { ISurface } from "../../Domain/ISurface";
+import { RangeMap } from "../../Domain/RangeMap";
+import { Range } from '../../Domain/Range';
 
 export class WorkerSurface implements ISurface {
 

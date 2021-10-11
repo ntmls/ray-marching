@@ -1,4 +1,5 @@
-import { IDiagnostics } from "./IDiagnostics";
+
+import { IDiagnostics } from "../IDiagnostics";
 import { RenderProcessMessage } from "./RenderProcessMessages";
 
 export class WorkerContext {

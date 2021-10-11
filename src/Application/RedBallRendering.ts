@@ -1,4 +1,3 @@
-import { ISurface } from "../Domain/ISurface";
 import { RgbColor } from "../Domain/RgbColor";
 import { IRayMarchStats } from "../Domain/IRayMarchStats";
 import { DistanceTest } from "../Domain/DistanceTest";
@@ -15,8 +14,8 @@ export class RedBallRendering extends RenderBasic3dScene {
     private readonly plane = new XAxisPlane().translate(Vector3.FromY(-1));
     private readonly planeMaterial: BasicMaterial;
     
-    constructor(surface: ISurface, rayMarchStats: IRayMarchStats) {
-        super(surface, rayMarchStats);
+    constructor(rayMarchStats: IRayMarchStats) {
+        super(rayMarchStats);
         this.planeMaterial = new BasicMaterial(RgbColor.Blue(), this.plane, this); 
         this.sphereMaterial = new BasicMaterial(RgbColor.Red(), this.sphere, this);
     }

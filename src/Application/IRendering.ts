@@ -1,4 +1,6 @@
+import { ISurface } from "../Domain/ISurface";
+
 export interface IRendering {
-    initialize(): void;
-    Render(): void;
+    initialize(surface: ISurface): void; 
+    render(): void;
 }

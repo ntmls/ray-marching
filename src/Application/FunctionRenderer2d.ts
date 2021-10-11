@@ -9,7 +9,7 @@ import { EmptyFunction2d, Function2d } from "../Domain/2d/Function2d";
 
 export abstract class FunctionRenderer2d implements IRendering, IIteration {
 
-    private readonly surface: ISurface;
+    private surface!: ISurface;
     protected function: Function2d;
     private readonly green = RgbColor.Green();
     private readonly greenBlack = RgbColor.mix(RgbColor.Green(), RgbColor.Black(), .25);
@@ -20,18 +20,18 @@ export abstract class FunctionRenderer2d implements IRendering, IIteration {
 
     abstract createFunction(): Function2d; 
     
-    constructor(surface: ISurface) {
-        this.surface = surface;
+    constructor() {
         this.function = new EmptyFunction2d();
         this.contourFunction = new Contours(1, .1);
     }   
 
-    initialize(): void {
+    initialize(surface: ISurface): void {
+        this.surface = surface;
         this.function = this.createFunction();
         this.surface.setSize(1080, 720, 1080 / 10);
     }
 
-    Render(): void {
+    render(): void {
         this.surface.iterate(this);
     }
 

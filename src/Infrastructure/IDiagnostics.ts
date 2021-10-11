@@ -1,5 +1,5 @@
-import { RenderProcessState } from "./RenderProcess";
-import { WorkerState } from "./WorkerState";
+import { WorkerState } from "./MultiCore/WorkerState";
+import { RenderProcessState } from "./MultiCoreRenderProcess";
 
 export interface IDiagnostics {
     logWorkerTransition(transitionName: string, workerNumber: number): void;
