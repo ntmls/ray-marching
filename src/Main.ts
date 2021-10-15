@@ -10,8 +10,8 @@ import { RenderParabola } from "./Application/RenderParabola"
 export function main(): void {
     try {
         const canvas = document.getElementById("surface") as HTMLCanvasElement;
-        //RenderMultiCore(canvas);
-        RenderSingleCore(canvas); 
+        RenderMultiCore(canvas);
+        //RenderSingleCore(canvas); 
     } catch(e) {
         console.log(e); 
     }

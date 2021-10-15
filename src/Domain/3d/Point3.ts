@@ -98,6 +98,10 @@ export class Point3 implements IPoint<Point3, Vector3> {
             this._z - Math.floor(this._z)
             );
     }
+
+    MoveY(amount: number) {
+        return new Point3(this._x, this._y + amount, this._z);
+    }
     
 }
 

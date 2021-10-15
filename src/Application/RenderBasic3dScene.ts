@@ -11,12 +11,13 @@ import { Ray } from "../Domain/3d/Ray";
 export abstract class RenderBasic3dScene implements IRendering, IIteration, IRayMarcher{
 
     private rayMarchStats: IRayMarchStats;
+    private scene!: IMarchable;
     private rayOrigin: Point3;
-    private minDist: number = .01;
-    private maxDist: number = 50;
-    private maxSteps: number = 300;
-    private background = RgbColor.White();
     private surface!: ISurface;
+    protected minDist: number = .01;
+    protected maxDist: number = 50;
+    protected maxSteps: number = 300;
+    protected background = RgbColor.White();
 
     constructor (rayMarchStats: IRayMarchStats) {
         this.rayMarchStats = rayMarchStats;
@@ -26,6 +27,7 @@ export abstract class RenderBasic3dScene implements IRendering, IIteration, IRay
     initialize(surface: ISurface): void {
         this.surface = surface; 
         surface.setSize(1080, 720, 300);
+        this.scene = this.buildScene(); 
     }
 
     render(): void {
@@ -45,14 +47,15 @@ export abstract class RenderBasic3dScene implements IRendering, IIteration, IRay
         var totalDistance = 0; 
         var step = 1;
         var currentPosition = ray.origin;
-        var minDist = this.minDist;
-        var maxSteps = this.maxSteps;
-        var maxDist = this.maxDist; 
+        const minDist = this.minDist;
+        const maxSteps = this.maxSteps;
+        const maxDist = this.maxDist; 
+        const scene = this.scene;
         var distanceTest: DistanceTest; 
         var surface!: ISurface;
 
         while(true)  {
-            distanceTest = this.getDistance(currentPosition);
+            distanceTest = scene.getDistance(currentPosition);
             totalDistance += distanceTest.distance; 
 
             currentPosition = ray.PointAt(totalDistance);
@@ -69,6 +72,10 @@ export abstract class RenderBasic3dScene implements IRendering, IIteration, IRay
         }
     }
 
-    abstract getDistance(pos: Point3): DistanceTest; 
+    abstract buildScene(): IMarchable;
 
+}
+
+export interface IMarchable {
+    getDistance(position: Point3): DistanceTest; 
 }
