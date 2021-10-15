@@ -68,5 +68,11 @@ export class RgbColor {
         return new RgbColor(0, 0, 1);
     }
 
+    plus(color: RgbColor): RgbColor {
+        return new RgbColor(
+            this._red + color.red, 
+            this._green + color.green, 
+            this._blue + color._blue); 
+    }
 
 }

@@ -1,14 +1,10 @@
 import { DistanceTest } from "../Domain/DistanceTest";
 import { IIteration } from "../Domain/IIteration";
-import { IMaterial } from "../Domain/IMaterial";
 import { IRayMarcher } from "../Domain/IRayMarcher";
 import { IRayMarchStats } from "../Domain/IRayMarchStats";
 import { ISurface } from "../Domain/ISurface";
 import { RgbColor } from "../Domain/RgbColor";
 import { IRendering } from "./IRendering";
-import { Vector3 } from "../Domain/3d/Vector3"; 
-import { Sdf3d } from "../Domain/3d/functions/sdf/Sdf3d";
-import { SdfNormalEstimator } from "../Domain/3d/functions/sdf/SdfNormalEstimator";
 import { Point3 } from "../Domain/3d/Point3";
 import { Ray } from "../Domain/3d/Ray";
 
@@ -75,40 +71,4 @@ export abstract class RenderBasic3dScene implements IRendering, IIteration, IRay
 
     abstract getDistance(pos: Point3): DistanceTest; 
 
-}
-
-export class BasicMaterial implements IMaterial {
-    private readonly light = new Point3(50 , 50, -50);
-    private readonly ambient = .25;   
-    private readonly normalEstimator = new SdfNormalEstimator(.001); 
-    private readonly sdf: Sdf3d;
-    private readonly color: RgbColor;
-    private readonly RayMarcher: IRayMarcher;
-
-    constructor(color: RgbColor, sdf: Sdf3d, rayMarcher: IRayMarcher) {
-        this.color = color;
-        this.sdf = sdf;
-        this.RayMarcher = rayMarcher;
-    }
-    
-    getColor(distanceTest: DistanceTest): RgbColor {
-        const position = distanceTest.position;
-
-        // test for shadow
-        const lightNormal = this.light.minus(position).normalize();
-        if (this.isInShadow(distanceTest.backupSome(.02), lightNormal)) return this.color.scaleBy(this.ambient);
-        
-        // not in shadow
-        const snorm = this.normalEstimator.calculateNormal(position, this.sdf); 
-        const angle = snorm.dot(lightNormal); 
-        const lightAmount = Math.min(1.0, Math.max(angle, this.ambient)); 
-        return this.color.scaleBy(lightAmount); 
-    }
-
-    isInShadow(position: Point3, lightVector: Vector3): boolean {
-        const ray = new Ray(position, lightVector); 
-        const distanceTest = this.RayMarcher.march(ray); 
-        return (distanceTest !== null);
-    }
-        
 }

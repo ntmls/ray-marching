@@ -24,12 +24,13 @@ function RenderMultiCore(canvas: HTMLCanvasElement) {
 }
 
 function RenderSingleCore(canvas: HTMLCanvasElement) {
-    //var stats = new RayMarchStats();
+    var stats = new RayMarchStats();
     //var rendering = new RenderIntersectionOfDisks2d(); 
-    var rendering = new RenderParabola(); 
+    var rendering = new RedBallRendering(stats);
+    //var rendering = new RenderParabola(); 
     const renderProcess = new SingleCoreRenderProcess(canvas, rendering);
     renderProcess.start();;
-    //logStats(stats);
+    logStats(stats);
 }
 
 function logStats(stats: RayMarchStats) {

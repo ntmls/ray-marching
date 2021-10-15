@@ -7,14 +7,16 @@ import { RgbColor } from "./RgbColor";
 export class DistanceTest {
     public readonly distance: number;
     private readonly material: IMaterial;
-    //private _rayOrigin!: Vector3;
-    //private _rayDirection!: Vector3;
     private _ray!: Ray;
     private _position!: Point3;
 
     constructor(distance: number, material: IMaterial) {
         this.material = material;
         this.distance = distance;
+    }
+
+    get ray(): Ray {
+        return this._ray;
     }
 
     appendInfoAfterHit( position: Point3, ray: Ray) {
@@ -26,6 +28,7 @@ export class DistanceTest {
        return this.material.getColor(this);
     }
 
+    // Deprecate - we should be going forward along the light ray rather than backing up along the camera ray
     backupSome(amount: number): Point3 {
         return this._position.plus(this._ray.direction.flip().scaleBy(amount)); 
     }

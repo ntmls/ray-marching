@@ -64,7 +64,7 @@ export class BasicMaterial implements IMaterial {
         if (this.specularAmount <= 0) return 0; 
         const reflected = this.reflect(lightNormal, surfaceNormal); 
         const cameraNormal = origin.minus(position).normalize();
-        const ang = (reflected.dot(cameraNormal);
+        const ang = reflected.dot(cameraNormal);
         if (ang < 0) return 0;
         return Math.pow(ang, this.specularPower) * this.specularAmount;
     }
