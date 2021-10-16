@@ -1,5 +1,5 @@
 
-import { RedBallRendering } from "../../Application/RedBallRendering";
+import { BallRendering } from "../../Application/BallRendering";
 import { RayMarchStats } from "../../Domain/RayMarchStats";
 import { Message } from "./Message";
 import { Initialize, RenderLine } from "./RenderProcessMessages";
@@ -14,7 +14,7 @@ const stats = new RayMarchStats();
 //let renderer = new RenderNoise1d(surface); 
 //let renderer = new TestSawtoothRendering(surface); 
 
-let renderer = new RedBallRendering(stats); 
+let renderer = new BallRendering(stats); 
 
 //let renderer = new RenderIntersectionOfDisks2d(surface); 
 //let renderer = new RenderRepeatOnY2d(surface);

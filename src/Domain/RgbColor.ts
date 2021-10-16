@@ -1,5 +1,4 @@
 export class RgbColor {
-
     private _red: number;
     private _green: number;
     private _blue: number;
@@ -13,11 +12,9 @@ export class RgbColor {
     get red(): number {
         return this._red;
     }
-
     get green(): number {
         return this._green;
     }
-
     get blue(): number {
         return this._blue; 
     }
@@ -43,29 +40,32 @@ export class RgbColor {
     static Black(): RgbColor {
         return new RgbColor(0, 0, 0);
     }
-
     static White(): RgbColor{
         return new RgbColor(1, 1, 1);
     }
-
     static GrayScale(value: number): RgbColor {
         return new RgbColor(value, value, value); 
     }
-
     static Red(): RgbColor {
         return new RgbColor(1, 0, 0);
     }
-
     static Orange(): RgbColor {
-        return new RgbColor (1,.647, 0);
+        return new RgbColor (1, .647, 0);
     }
-
     static Green(): RgbColor {
         return new RgbColor(0, 1, 0);
     }
-
     static Blue(): RgbColor {
         return new RgbColor(0, 0, 1);
+    }
+    static Magenta(): RgbColor {
+        return new RgbColor(1, 0, 1); 
+    }
+    static Cyan(): RgbColor {
+        return new RgbColor(0, 1, 1); 
+    }
+    static Yellow(): RgbColor {
+        return new RgbColor(1, 1, 0); 
     }
 
     plus(color: RgbColor): RgbColor {

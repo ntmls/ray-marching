@@ -1,4 +1,4 @@
-import { RedBallRendering } from "./Application/RedBallRendering";
+import { BallRendering } from "./Application/BallRendering";
 import { RenderIntersectionOfDisks2d } from "./Application/RenderIntersectionOfDisks2d";
 import { IntersectionOfTwoDisks2d } from "./Domain/2d/functions/sdf/IntersectionOfTwoDisks2d";
 import { RayMarchStats } from "./Domain/RayMarchStats";
@@ -7,11 +7,27 @@ import { MultiCoreRenderProcess } from "./Infrastructure/MultiCoreRenderProcess"
 import { SingleCoreRenderProcess } from "./Infrastructure/SingleCoreRenderProcess";
 import { RenderParabola } from "./Application/RenderParabola"
 
+class Stopwatch {
+    private readonly startTime!: Date; 
+
+    constructor() {
+        this.startTime = new Date(); 
+    }
+
+    get duration(): number {
+        const now = new Date(); 
+        const milliseconds = now.getTime() - this.startTime.getTime(); 
+        const seconds = milliseconds / 1000;
+        return seconds;
+    }
+}
+
 export function main(): void {
     try {
         const canvas = document.getElementById("surface") as HTMLCanvasElement;
-        RenderMultiCore(canvas);
-        //RenderSingleCore(canvas); 
+        //RenderMultiCore(canvas);
+        RenderSingleCore(canvas); 
+
     } catch(e) {
         console.log(e); 
     }
@@ -19,18 +35,22 @@ export function main(): void {
 main();
 
 function RenderMultiCore(canvas: HTMLCanvasElement) {
+    const timer = new Stopwatch(); 
     const renderProcess = new MultiCoreRenderProcess(canvas, new NoDiagnostics(), 5);
     renderProcess.start();
+    console.log(timer.duration); 
 }
 
 function RenderSingleCore(canvas: HTMLCanvasElement) {
+    const timer = new Stopwatch(); 
     var stats = new RayMarchStats();
     //var rendering = new RenderIntersectionOfDisks2d(); 
-    var rendering = new RedBallRendering(stats);
+    var rendering = new BallRendering(stats);
     //var rendering = new RenderParabola(); 
     const renderProcess = new SingleCoreRenderProcess(canvas, rendering);
     renderProcess.start();;
     logStats(stats);
+    console.log(timer.duration); 
 }
 
 function logStats(stats: RayMarchStats) {
@@ -44,3 +64,4 @@ function logStats(stats: RayMarchStats) {
     console.log("Maximum Steps: " + stats.maxSteps);
     console.log("Maximum hit Steps: " + stats.maxHitSteps);
 }
+

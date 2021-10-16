@@ -11,6 +11,7 @@ export class DistanceTest {
     private _position!: Point3;
 
     constructor(distance: number, material: IMaterial) {
+        if (!material) throw new Error("Missing 'material' argument."); 
         this.material = material;
         this.distance = distance;
     }
