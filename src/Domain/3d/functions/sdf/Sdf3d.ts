@@ -3,7 +3,7 @@ import { Translation3 } from "../../Translation3";
 import { Vector3 } from "../../Vector3";
 
 export abstract class Sdf3d {
-    abstract getDistance(position: Point3): number
+    abstract getDistance(x: number, y: number, z: number): number
 
     transform(transformation: Point3Transform): Sdf3d {
         return new TransformSdf3(this, transformation);
@@ -26,8 +26,12 @@ export class TransformSdf3 extends Sdf3d {
         this.transformation = transformation;
     }
 
-    getDistance(position: Point3): number {
-        return this.sdf.getDistance(this.transformation.transform(position));
+    getDistance(x: number, y: number, z: number): number {
+        return this.sdf.getDistance(
+            this.transformation.transformX(x), 
+            this.transformation.transformY(y), 
+            this.transformation.transformZ(z)
+        );
     }
 
 }

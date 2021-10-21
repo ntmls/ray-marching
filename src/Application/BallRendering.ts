@@ -48,19 +48,20 @@ class Scene implements IMarchable {
         this.planeMaterial = new BasicMaterial(RgbColor.GrayScale(.5), this.plane, marcher); 
     }
     
-    getDistance(position: Point3): DistanceTest {
-        let d1 = this.plane.getDistance(position); 
+    getDistance(x: number, y: number, z: number): DistanceTest {
+        let d1 = this.plane.getDistance(x, y, z); 
         //let d2 = this.sphere.getDistance(position);   
-        let d2 = this.getDistanceForArray(this.spheres, this.sphereCount, position);   
+        let d2 = Scene.getDistanceForArray(this.spheres, this.sphereCount, x , y, z);   
         if (d1 < d2.distance) return new DistanceTest(d1, this.planeMaterial); 
         return new DistanceTest(d2.distance, this.sphereMaterials[d2.index]); 
     }
 
-    getDistanceForArray(sdfs: Sdf3d[], count: number, position: Point3): ArrayDistanceResult {
+    private static getDistanceForArray(sdfs: Sdf3d[], count: number, x: number, y: number, z: number): ArrayDistanceResult {
         var index: number = 0;
-        var minDist: number = sdfs[0].getDistance(position); 
+        var minDist: number = sdfs[0].getDistance(x, y, z); 
+        var dist: number = 0; 
         for (let i = 1; i < count; i++) {
-            const dist = sdfs[i].getDistance(position); 
+            dist = sdfs[i].getDistance(x, y, z); 
             if (dist < minDist) {
                 minDist = dist;
                 index = i;

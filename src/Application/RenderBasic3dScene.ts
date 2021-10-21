@@ -52,10 +52,9 @@ export abstract class RenderBasic3dScene implements IRendering, IIteration, IRay
         const maxDist = this.maxDist; 
         const scene = this.scene;
         var distanceTest: DistanceTest; 
-        var surface!: ISurface;
 
         while(true)  {
-            distanceTest = scene.getDistance(currentPosition);
+            distanceTest = scene.getDistance(currentPosition.x, currentPosition.y, currentPosition.z);
             totalDistance += distanceTest.distance; 
 
             currentPosition = ray.PointAt(totalDistance);
@@ -77,5 +76,5 @@ export abstract class RenderBasic3dScene implements IRendering, IIteration, IRay
 }
 
 export interface IMarchable {
-    getDistance(position: Point3): DistanceTest; 
+    getDistance(x: number, y: number, z: number): DistanceTest; 
 }

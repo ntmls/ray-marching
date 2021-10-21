@@ -47,7 +47,7 @@ export class BasicMaterial implements IMaterial {
         }
 
         // not in shadow
-        const surfaceNormal = this.normalEstimator.calculateNormal(position, this.sdf); 
+        const surfaceNormal = this.normalEstimator.calculateNormal(position.x, position.y, position.z, this.sdf); 
         diffuseAmount = Math.max(surfaceNormal.dot(lightNormal), this.ambient);
         const specular = this.calculateSpecular(position, lightNormal, surfaceNormal, camera); 
         return this.blend(diffuseAmount, specular); 

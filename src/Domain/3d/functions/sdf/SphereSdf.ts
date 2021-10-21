@@ -15,10 +15,10 @@ export class SphereSdf extends Sdf3d {
         this.radius = radius;
     }
 
-    getDistance(position: Point3): number {
-        const vx = position.x - this.x; 
-        const vy = position.y - this.y;
-        const vz = position.z - this.z;
+    getDistance(x: number, y: number, z: number): number {
+        const vx = x - this.x; 
+        const vy = y - this.y;
+        const vz = z - this.z;
         return Math.sqrt(vx * vx +  vy * vy + vz * vz) - this.radius;
     }
 }
