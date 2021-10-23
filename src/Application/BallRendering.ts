@@ -3,7 +3,7 @@ import { IRayMarchStats } from "../Domain/IRayMarchStats";
 import { DistanceTest } from "../Domain/DistanceTest";
 import { IMarchable, RenderBasic3dScene } from "./RenderBasic3dScene";
 import { SphereSdf } from "../Domain/3d/functions/sdf/SphereSdf";
-import { XAxisPlane } from "../Domain/3d/functions/sdf/XAxisPlane"; 
+import { XZPlane } from "../Domain/3d/functions/sdf/XYPlane"; 
 import { Point3 } from "../Domain/3d/Point3";
 import { Vector3 } from "../Domain/3d/Vector3";
 import { BasicMaterial } from "../Domain/BasicMaterial";
@@ -21,10 +21,9 @@ export class BallRendering extends RenderBasic3dScene {
 }
 
 class Scene implements IMarchable {
-    //private readonly sphere = new SphereSdf(new Point3(0, 0, 5), 1);
     private readonly spheres: Array<Sdf3d>;
     private readonly sphereMaterials: Array<BasicMaterial>; 
-    private readonly plane = new XAxisPlane().translate(Vector3.FromY(-1));
+    private readonly plane = new XZPlane().translate(Vector3.FromY(-1));
     private readonly planeMaterial: BasicMaterial;
     private readonly sphereCount = 7; 
     
@@ -49,9 +48,8 @@ class Scene implements IMarchable {
     }
     
     getDistance(x: number, y: number, z: number): DistanceTest {
-        let d1 = this.plane.getDistance(x, y, z); 
-        //let d2 = this.sphere.getDistance(position);   
-        let d2 = Scene.getDistanceForArray(this.spheres, this.sphereCount, x , y, z);   
+        const d1 = this.plane.getDistance(x,y,z); 
+        const d2 = Scene.getDistanceForArray(this.spheres, this.sphereCount, x , y, z);   
         if (d1 < d2.distance) return new DistanceTest(d1, this.planeMaterial); 
         return new DistanceTest(d2.distance, this.sphereMaterials[d2.index]); 
     }
