@@ -1,9 +1,10 @@
+import { Point3 } from "../../Point3";
 import { Sdf3d } from "./Sdf3d";
 
-export class XZPlane extends Sdf3d {
+export class XZPlane implements Sdf3d {
 
-    getDistance(x: number, y: number, z: number): number {
-        if (y < 0) return -y;
-        return y; 
+    getDistance(position: Point3): number {
+        if (position.y < 0) return -position.y;
+        return position.y; 
     }
 }

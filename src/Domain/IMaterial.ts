@@ -1,6 +1,6 @@
-import { DistanceTest } from "./DistanceTest";
+import { RayHit } from "./RayHit";
 import { RgbColor } from "./RgbColor";
 
 export interface IMaterial {
-    getColor(distanceTest: DistanceTest): RgbColor;
+    getColor(distanceTest: RayHit): RgbColor;
 }

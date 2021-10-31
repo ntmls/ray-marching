@@ -7,14 +7,12 @@ export class Translation3 implements Point3Transform {
     constructor(offset: Vector3) {
         this.offset = offset;
     }
-    transformX(x: number): number {
-        return x + this.offset.x; 
-    }
-    transformY(y: number): number {
-        return y + this.offset.y; 
-    }
-    transformZ(z: number): number {
-        return z + this.offset.z; 
+    transform(position: Point3): Point3 {
+        return new Point3(
+            position.x + this.offset.x, 
+            position.y + this.offset.y, 
+            position.z + this.offset.z
+        );
     }
 
 }

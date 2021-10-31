@@ -106,7 +106,5 @@ export class Point3 implements IPoint<Point3, Vector3> {
 }
 
 export interface Point3Transform {
-    transformX(x: number): number; 
-    transformY(y: number): number; 
-    transformZ(z: number): number; 
+    transform(position: Point3): Point3; 
 }

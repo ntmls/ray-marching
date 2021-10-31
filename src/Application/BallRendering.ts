@@ -1,79 +1,168 @@
 import { RgbColor } from "../Domain/RgbColor";
 import { IRayMarchStats } from "../Domain/IRayMarchStats";
-import { DistanceTest } from "../Domain/DistanceTest";
-import { IMarchable, RenderBasic3dScene } from "./RenderBasic3dScene";
+import { RayHit } from "../Domain/RayHit";
+import { IScene, RenderBasic3dScene } from "./RenderBasic3dScene";
 import { SphereSdf } from "../Domain/3d/functions/sdf/SphereSdf";
 import { XZPlane } from "../Domain/3d/functions/sdf/XYPlane"; 
 import { Point3 } from "../Domain/3d/Point3";
 import { Vector3 } from "../Domain/3d/Vector3";
 import { BasicMaterial } from "../Domain/BasicMaterial";
-import { IRayMarcher } from "../Domain/IRayMarcher";
-import { Sdf3d } from "../Domain/3d/functions/sdf/Sdf3d";
+import { Sdf3d, SdfTransformations } from "../Domain/3d/functions/sdf/Sdf3d";
+import { Ray } from "../Domain/3d/Ray";
+import { IMaterial } from "../Domain/IMaterial";
+import { ISdfSceneObject, SceneObject } from "../Domain/SceneObject";
+import { SdfNormalEstimator } from "../Domain/3d/functions/sdf/SdfNormalEstimator";
+import { IIterable } from "../Domain/IIterable";
+import { LinkedList } from "../Domain/LinkedList";
 
 export class BallRendering extends RenderBasic3dScene {
     constructor(rayMarchStats: IRayMarchStats) {
         super(rayMarchStats);
     }
 
-    buildScene(): IMarchable {
-        return new Scene(this);
+    buildScene(): IScene {
+        return new Scene();
     }
 }
 
-class Scene implements IMarchable {
+class Scene implements IScene {
+    /*
     private readonly spheres: Array<Sdf3d>;
     private readonly sphereMaterials: Array<BasicMaterial>; 
-    private readonly plane = new XZPlane().translate(Vector3.FromY(-1));
-    private readonly planeMaterial: BasicMaterial;
-    private readonly sphereCount = 7; 
+    */
+    private readonly objects: LinkedList<SceneObject>; 
+    private readonly objectCount: number = 8; 
+    private readonly marchableObjects: IIterable<ISdfSceneObject>
+    // ray march settings
+    private readonly minimumDistance: number = .01; 
+    private readonly maximumSteps: number = 200; 
+    private readonly maximumDistance: number = 80; 
     
-    constructor(marcher: IRayMarcher) {
+    constructor() {
+        /*
         this.spheres = new Array<Sdf3d>();
-        this.spheres.push(new SphereSdf(new Point3(-6, 0, 5), 1)); 
-        this.spheres.push(new SphereSdf(new Point3(-4, 0, 5), 1)); 
-        this.spheres.push(new SphereSdf(new Point3(-2, 0, 5), 1)); 
-        this.spheres.push(new SphereSdf(new Point3(0, 0, 5), 1)); 
-        this.spheres.push(new SphereSdf(new Point3(2, 0, 5), 1)); 
-        this.spheres.push(new SphereSdf(new Point3(4, 0, 5), 1)); 
-        this.spheres.push(new SphereSdf(new Point3(6, 0, 5), 1)); 
         this.sphereMaterials = new Array<BasicMaterial>();
-        this.sphereMaterials.push(new BasicMaterial(RgbColor.Red(), this.spheres[0], marcher)); 
-        this.sphereMaterials.push(new BasicMaterial(RgbColor.Orange(), this.spheres[1], marcher)); 
-        this.sphereMaterials.push(new BasicMaterial(RgbColor.Yellow(), this.spheres[2], marcher)); 
-        this.sphereMaterials.push(new BasicMaterial(RgbColor.Green(), this.spheres[3], marcher)); 
-        this.sphereMaterials.push(new BasicMaterial(RgbColor.Blue(), this.spheres[4], marcher)); 
-        this.sphereMaterials.push(new BasicMaterial(RgbColor.Magenta(), this.spheres[5], marcher)); 
-        this.sphereMaterials.push(new BasicMaterial(RgbColor.Red(), this.spheres[6], marcher)); 
-        this.planeMaterial = new BasicMaterial(RgbColor.GrayScale(.5), this.plane, marcher); 
-    }
-    
-    getDistance(x: number, y: number, z: number): DistanceTest {
-        const d1 = this.plane.getDistance(x,y,z); 
-        const d2 = Scene.getDistanceForArray(this.spheres, this.sphereCount, x , y, z);   
-        if (d1 < d2.distance) return new DistanceTest(d1, this.planeMaterial); 
-        return new DistanceTest(d2.distance, this.sphereMaterials[d2.index]); 
+        */ 
+        this.objects = new LinkedList<SceneObject>(); 
+      
+        this.objects.add(new SdfObject(
+            new SphereSdf(new Point3(-6, 0, 5), 1), 
+            new BasicMaterial(RgbColor.Red(), this)
+            )); 
+        
+        this.objects.add(new SdfObject(
+            new SphereSdf(new Point3(-4, 0, 5), 1),
+            new BasicMaterial(RgbColor.Orange(), this)
+            )); 
+
+        this.objects.add(new SdfObject(
+            new SphereSdf(new Point3(-2, 0, 5), 1),
+            new BasicMaterial(RgbColor.Yellow(), this)
+            )); 
+
+        this.objects.add(new SdfObject(
+            new SphereSdf(new Point3(0, 0, 5), 1),
+            new BasicMaterial(RgbColor.Green(), this)
+            )); 
+
+        this.objects.add(new SdfObject(
+            SdfTransformations.translate(new XZPlane(), Vector3.FromY(-1)),
+            new BasicMaterial(RgbColor.GrayScale(.5),  this)
+            )); 
+
+        this.objects.add(new SdfObject(
+            new SphereSdf(new Point3(2, 0, 5), 1),
+            new BasicMaterial(RgbColor.Blue(), this)
+            )); 
+
+        this.objects.add(new SdfObject(
+            new SphereSdf(new Point3(4, 0, 5), 1),
+            new BasicMaterial(RgbColor.Magenta(),  this)
+            )); 
+
+        this.objects.add(new SdfObject(
+            new SphereSdf(new Point3(6, 0, 5), 1),
+            new BasicMaterial(RgbColor.Red(),  this)
+            )); 
+        
+        this.marchableObjects = this.getMarchableObjects(); 
+
     }
 
-    private static getDistanceForArray(sdfs: Sdf3d[], count: number, x: number, y: number, z: number): ArrayDistanceResult {
-        var index: number = 0;
-        var minDist: number = sdfs[0].getDistance(x, y, z); 
-        var dist: number = 0; 
-        for (let i = 1; i < count; i++) {
-            dist = sdfs[i].getDistance(x, y, z); 
-            if (dist < minDist) {
-                minDist = dist;
-                index = i;
+    trace(ray: Ray): RayHit | null {
+        return this.marchRay(ray, this.marchableObjects); 
+    }
+
+    private getMarchableObjects(): IIterable<ISdfSceneObject> {
+        const result = new LinkedList<ISdfSceneObject>();
+        const iterator = this.objects.createIterator(); 
+        while(iterator.hasNext) {
+            const object = iterator.next();
+            if (object.type === 'MarchableSceneObject') {
+                result.add(object as ISdfSceneObject); 
             }
         }
-        return new ArrayDistanceResult(minDist, index); 
+        return result;
     }
+
+    private marchRay(ray: Ray, objects: IIterable<ISdfSceneObject>): RayHit | null {
+        var totalDistance = 0; 
+        var step = 1;
+        var currentPosition = ray.origin;
+        var hit: RayHit; 
+
+        while(true)  {
+            hit = this.getDistanceForMarchableObjects(objects, currentPosition);
+            totalDistance += hit.distance; 
+            currentPosition = ray.PointAt(totalDistance);
+            if (hit.distance < this.minimumDistance) {
+                //this.rayMarchStats.rayMarched(true, step, totalDistance);
+                hit.appendInfoAfterHit(currentPosition, ray);
+                return hit;
+            } else if (step > this.maximumSteps || totalDistance > this.maximumDistance) {
+                //this.rayMarchStats.rayMarched(false, step, totalDistance);
+                return null;
+            }
+            step++;
+        }
+    }
+
+    getDistanceForMarchableObjects(objects: IIterable<ISdfSceneObject>, position: Point3): RayHit {
+        const iterator = objects.createIterator();
+        var objectHit!: SceneObject;
+        var minDist: number = Number.MAX_VALUE;
+        var dist: number = 0;
+        var object: ISdfSceneObject;
+        while(iterator.hasNext) {
+            object = iterator.next();
+            dist = object.sdf.getDistance(position); 
+            if (dist < minDist) {
+                minDist = dist;
+                objectHit = object;
+            }
+        }
+        return new RayHit(minDist, objectHit); 
+    }
+
 }
 
-class ArrayDistanceResult {
-    public distance: number = 0;
-    public index: number = 0;
-    constructor(distance: number, index: number) {
-        this.distance = distance;
-        this.index = index;
+class SdfObject implements ISdfSceneObject {
+    public readonly material: IMaterial; 
+    public readonly sdf: Sdf3d; 
+    private normalEstimator: SdfNormalEstimator; 
+
+    constructor(sdf: Sdf3d, material: IMaterial) {
+        this.material = material;
+        this.sdf = sdf;
+        this.normalEstimator = new SdfNormalEstimator(.0000001); 
+    }
+
+    get type(): string {
+        return 'MarchableSceneObject'; 
+    }
+
+    calculateNormal(rayHit: RayHit): Vector3 {
+        const position = rayHit.position; 
+        return this.normalEstimator.calculateNormal(position.x, position.y, position.z, this.sdf); 
     }
 }
