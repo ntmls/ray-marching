@@ -39,10 +39,10 @@ export class Vector3 implements IVector<Vector3> {
         return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
     }
 
-    distanceFrom(point: Vector3): number {
-        const dx = this.x - point.x;
-        const dy = this.y - point.y;
-        const dz = this.z - point.z;
+    distanceFrom(other: Vector3): number {
+        const dx = this.x - other.x;
+        const dy = this.y - other.y;
+        const dz = this.z - other.z;
         return Math.sqrt(dx * dx +  dy * dy + dz * dz);
     }
 

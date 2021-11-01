@@ -1,4 +1,3 @@
-import { BallRendering } from "./Application/BallRendering";
 import { RenderIntersectionOfDisks2d } from "./Application/RenderIntersectionOfDisks2d";
 import { IntersectionOfTwoDisks2d } from "./Domain/2d/functions/sdf/IntersectionOfTwoDisks2d";
 import { RayMarchStats } from "./Domain/RayMarchStats";
@@ -6,6 +5,8 @@ import { Diagnostics, NoDiagnostics } from "./Infrastructure/IDiagnostics";
 import { MultiCoreRenderProcess } from "./Infrastructure/MultiCoreRenderProcess";
 import { SingleCoreRenderProcess } from "./Infrastructure/SingleCoreRenderProcess";
 import { RenderParabola } from "./Application/RenderParabola"
+import { RenderBasic3dScene } from "./Application/RenderBasic3dScene";
+import { BallScene } from "./Application/BallScene";
 
 class Stopwatch {
     private readonly startTime!: Date; 
@@ -45,7 +46,7 @@ function RenderSingleCore(canvas: HTMLCanvasElement) {
     const timer = new Stopwatch(); 
     var stats = new RayMarchStats();
     //var rendering = new RenderIntersectionOfDisks2d(); 
-    var rendering = new BallRendering(stats);
+    var rendering = new RenderBasic3dScene(new BallScene(), stats);
     //var rendering = new RenderParabola(); 
     const renderProcess = new SingleCoreRenderProcess(canvas, rendering);
     renderProcess.start();;
