@@ -7,21 +7,7 @@ import { SingleCoreRenderProcess } from "./Infrastructure/SingleCoreRenderProces
 import { RenderParabola } from "./Application/RenderParabola"
 import { RenderBasic3dScene } from "./Application/RenderBasic3dScene";
 import { BallScene } from "./Application/BallScene";
-
-class Stopwatch {
-    private readonly startTime!: Date; 
-
-    constructor() {
-        this.startTime = new Date(); 
-    }
-
-    get duration(): number {
-        const now = new Date(); 
-        const milliseconds = now.getTime() - this.startTime.getTime(); 
-        const seconds = milliseconds / 1000;
-        return seconds;
-    }
-}
+import { Stopwatch } from "./Infrastructure/StopWatch";
 
 export function main(): void {
     try {
