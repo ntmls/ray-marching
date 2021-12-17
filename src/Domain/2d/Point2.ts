@@ -2,39 +2,31 @@ import { IPoint } from "../IPoint";
 import { Vector2 } from "./Vector2";
 
 export class Point2 implements IPoint<Point2, Vector2> {
-    private readonly _x: number;
-    private readonly _y: number;
+    readonly x: number;
+    readonly y: number;
 
     constructor(x: number, y: number) {
-        this._x = x;
-        this._y = y;
-    }
-
-    get x(): number {
-        return this._x; 
-    }
-
-    get y(): number {
-        return this._y; 
+        this.x = x;
+        this.y = y;
     }
 
     get componentCount(): number {
         return 2;
     }
     component(index: number): number {
-        if (index === 0) return this._x;
-        if (index === 1) return this._y; 
+        if (index === 0) return this.x;
+        if (index === 1) return this.y; 
         throw new Error("Invalid component index."); 
     }
     minus(point: Point2): Vector2 {
         return new Vector2(
-            this._x - point.x, 
-            this._y - point.y); 
+            this.x - point.x, 
+            this.y - point.y); 
     }
     plus(vector: Vector2): Point2 {
         return new Point2(
-            this._x + vector.x, 
-            this._y + vector.y); 
+            this.x + vector.x, 
+            this.y + vector.y); 
     }
     distanceFrom(point: Point2): number {
         const dx = this.x - point.x;
@@ -48,32 +40,32 @@ export class Point2 implements IPoint<Point2, Vector2> {
     }
     max(point: Point2): Point2 {
         return new Point2(
-            Math.max(this._x, point.x), 
-            Math.max(this._y,  point.y));
+            Math.max(this.x, point.x), 
+            Math.max(this.y,  point.y));
     }
     min(point: Point2): Point2 {
         return new Point2(
-            Math.min(this._x, point.x), 
-            Math.min(this._y,  point.y)
+            Math.min(this.x, point.x), 
+            Math.min(this.y,  point.y)
             );
     }
     lerp(point: Point2, time: number): Point2 {
         var timePrime = 1 - time;
         return new Point2(
-            this._x * timePrime + point.x * time, 
-            this._y * timePrime + point.y * time
+            this.x * timePrime + point.x * time, 
+            this.y * timePrime + point.y * time
             );
     }
     floor(): Point2 {
         return new Point2(
-            Math.floor(this._x), 
-            Math.floor(this._y)
+            Math.floor(this.x), 
+            Math.floor(this.y)
             );
     }
     fractional(): Point2 {
         return new Point2(
-            this._x - Math.floor(this._x), 
-            this._y - Math.floor(this._y)
+            this.x - Math.floor(this.x), 
+            this.y - Math.floor(this.y)
             );
     }
 

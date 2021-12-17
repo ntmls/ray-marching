@@ -2,14 +2,14 @@ import { IPoint } from "../IPoint";
 import { Vector3 } from "./Vector3";
 
 export class Point3 implements IPoint<Point3, Vector3> {
-    private readonly _x: number;
-    private readonly _y: number;
-    private readonly _z: number; 
+    readonly x: number;
+    readonly y: number;
+    readonly z: number; 
 
     constructor(x: number, y: number, z: number) {
-        this._x = x;
-        this._y = y;
-        this._z = z;
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
     static atX(x: number): Point3 {
         return new Point3(x, 0, 0);
@@ -20,35 +20,26 @@ export class Point3 implements IPoint<Point3, Vector3> {
     static atZ(z: number): Point3 {
         return new Point3(0, 0, z);
     }
-    get x(): number {
-        return this._x; 
-    }
-    get y(): number {
-        return this._y; 
-    }
-    get z(): number {
-        return this._z; 
-    }
     get componentCount(): number {
         return 3;
     }
     component(index: number): number {
-        if (index === 0) return this._x;
-        if (index === 1) return this._y; 
-        if (index === 2) return this._z;
+        if (index === 0) return this.x;
+        if (index === 1) return this.y; 
+        if (index === 2) return this.z;
         throw new Error("Invalid component index."); 
     }
     minus(point: Point3): Vector3 {
         return new Vector3(
-            this._x - point.x, 
-            this._y - point.y, 
-            this._z - point.z)
+            this.x - point.x, 
+            this.y - point.y, 
+            this.z - point.z)
     }
     plus(vector: Vector3): Point3 {
         return new Point3(
-            this._x + vector.x, 
-            this._y + vector.y, 
-            this._z + vector.z); 
+            this.x + vector.x, 
+            this.y + vector.y, 
+            this.z + vector.z); 
     }
     distanceFrom(point: Point3): number {
         const dx = this.x - point.x;
@@ -64,43 +55,80 @@ export class Point3 implements IPoint<Point3, Vector3> {
     }
     max(point: Point3): Point3 {
         return new Point3(
-            Math.max(this._x, point.x), 
-            Math.max(this._y,  point.y),
-            Math.max(this._z,  point.z)
+            Math.max(this.x, point.x), 
+            Math.max(this.y,  point.y),
+            Math.max(this.z,  point.z)
             );
     }
     min(point: Point3): Point3 {
         return new Point3(
-            Math.min(this._x, point.x), 
-            Math.min(this._y,  point.y),
-            Math.min(this._z,  point.z)
+            Math.min(this.x, point.x), 
+            Math.min(this.y,  point.y),
+            Math.min(this.z,  point.z)
             );
     }
     lerp(point: Point3, time: number): Point3 {
         var timePrime = 1 - time;
         return new Point3(
-            this._x * timePrime + point.x * time, 
-            this._y * timePrime + point.y * time,
-            this._z * timePrime + point.z * time
+            this.x * timePrime + point.x * time, 
+            this.y * timePrime + point.y * time,
+            this.z * timePrime + point.z * time
             );
     }
     floor(): Point3 {
         return new Point3(
-            Math.floor(this._x), 
-            Math.floor(this._y),
-            Math.floor(this._z)
+            Math.floor(this.x), 
+            Math.floor(this.y),
+            Math.floor(this.z)
             );
     }
     fractional(): Point3 {
         return new Point3(
-            this._x - Math.floor(this._x), 
-            this._y - Math.floor(this._y), 
-            this._z - Math.floor(this._z)
+            this.x - Math.floor(this.x), 
+            this.y - Math.floor(this.y), 
+            this.z - Math.floor(this.z)
             );
     }
 
     MoveY(amount: number) {
-        return new Point3(this._x, this._y + amount, this._z);
+        return new Point3(this.x, this.y + amount, this.z);
+    }
+
+    absolute() {
+        return new Point3(
+            Math.abs(this.x),
+            Math.abs(this.y),
+            Math.abs(this.z)
+            ); 
+    }
+
+    rotateAbout(start: Point3, end: Point3, radians: number) {
+        const delta = end.minus(start); 
+        const deltaNorm = delta.normalize(); 
+        const vectToThis = this.minus(start); 
+        const t = deltaNorm.dot(vectToThis); 
+        const pointOfRotation = start.plus(delta.scaleBy(t))
+        const basis1 = this.minus(pointOfRotation);
+        const basis1Norm = basis1.normalize()
+        const lengthAlongBasis1 = basis1.magnitude; 
+        const basis2 = basis1Norm.cross(deltaNorm); 
+        const u = lengthAlongBasis1 * Math.cos(radians)
+        const v = lengthAlongBasis1 * Math.sin(radians); 
+        const vect1 = basis1Norm.scaleBy(u);
+        const vect2 = basis2.scaleBy(v); 
+        return pointOfRotation.plus(vect1).plus(vect2); 
+    }
+
+    toVector() {
+        return new Vector3(
+            this.x, 
+            this.y, 
+            this.z
+        );
+    }
+
+    static get origin(): Point3 {
+        return new Point3(0, 0, 0); 
     }
     
 }

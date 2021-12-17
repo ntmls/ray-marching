@@ -5,63 +5,103 @@ import { RayHit } from "./RayHit";
 import { IMaterial } from "./IMaterial";
 import { RgbColor } from "./RgbColor";
 import { IRayTracer } from "./IRayTracer";
+import { ILight, LightResult } from "./ILight";
+import { IIterable } from "./IIterable";
+import { LinkedList } from "./LinkedList";
 
 export class BasicMaterial implements IMaterial {
-    
-    light = new Point3(50 , 50, -50);
-    specularColor: RgbColor;
-    specularAmount: number; 
-    specularPower: number;
-    ambient = .25;   
-    private readonly diffuseColor: RgbColor;
+    color = RgbColor.GrayScale(.5); 
+    lights: IIterable<ILight>; 
+    specularAmount= .75; 
+    specularPower = 50;
+    ambientAmount = .25;   
+    ambientColor = RgbColor.White();
+
     private readonly rayTracer: IRayTracer;
 
-    constructor(
-        diffuseColor: RgbColor, 
-        rayTracer: IRayTracer) 
-    {
-        this.diffuseColor = diffuseColor;
-        this.specularColor = RgbColor.White();
-        this.specularAmount = .75;
-        this.specularPower = 50; 
+    constructor(rayTracer: IRayTracer) {
         this.rayTracer = rayTracer; 
+        const lights = new LinkedList<ILight>(); 
+        this.lights = lights; 
     }
     
     getColor(hit: RayHit): RgbColor {
         const position = hit.at;
-        const lightNormal = this.light.minus(position).normalize();
-        const camera = hit.ray.origin;
-
-        //if (distanceTest.distance < .0) return RgbColor.Green();
-        // test for shadow
-        let diffuseAmount = 0;
-        if (this.isInShadow(hit.backupSome(.05), lightNormal)) {
-            return this.diffuseColor.scaleBy(this.ambient);
-        }
-
-        // not in shadow
         const surfaceNormal = hit.object.calculateNormal(hit); 
-        diffuseAmount = Math.max(surfaceNormal.dot(lightNormal), this.ambient);
-        const specular = this.calculateSpecular(position, lightNormal, surfaceNormal, camera); 
-        return this.blend(diffuseAmount, specular); 
+        const cameraNormal = hit.ray.origin.minus(position).normalize();
+
+        //var totalDiffuse = RgbColor.Black(); 
+        var totalDiffuseRed = 0;
+        var totalDiffuseGreen = 0;
+        var totalDiffuseBlue = 0;
+
+        //var totalSpecular = RgbColor.Black(); 
+        var totalSpecularRed = 0;
+        var totalSpecularGreen = 0; 
+        var totalSpecularBlue = 0; 
+
+        var ambient = this.calculateAmbientLight();
+        const iterator = this.lights.createIterator(); 
+        while (iterator.hasNext) {
+            const light = iterator.next(); 
+            const count = light.sampleCount; ``
+            for (var i = 0; i < count; i += 1) {
+                const lightResult = light.getColor(position, surfaceNormal); 
+
+                // calculate diffuse
+                const diffuse = this.calculateDiffuse(surfaceNormal, lightResult, position); 
+                totalDiffuseRed += diffuse.red;
+                totalDiffuseGreen += diffuse.green; 
+                totalDiffuseBlue += diffuse.blue;
+
+                // calculate specular
+                const specular = this.calculateSpecular(surfaceNormal, lightResult, cameraNormal)
+                totalSpecularRed += specular.red; 
+                totalSpecularGreen += specular.green; 
+                totalSpecularBlue += specular.blue; 
+            }
+        }
+        const objectColor = this.getObjectColor();
+        return new RgbColor(
+            (ambient.red + totalDiffuseRed) * objectColor.red + totalSpecularRed, 
+            (ambient.green + totalDiffuseGreen) * objectColor.green + totalSpecularGreen, 
+            (ambient.blue + totalDiffuseBlue) * objectColor.blue + totalSpecularBlue
+        );
+
+        /*
+        return  ambient
+            .plus(totalDiffuse)
+            .multiply(objectColor)
+            .plus(totalSpecular);
+        */
     }
 
-    private blend(diffuseAmount: number, specularAmount: number): RgbColor {
-        //const adjustedDiffuse = this.diffuseColor.scaleBy(Math.max(diffuseAmount - specularAmount, 0));
-        const adjustedDiffuse = this.diffuseColor.scaleBy(diffuseAmount);
-        const adjustedSpecular = this.specularColor.scaleBy(specularAmount);
-        return adjustedDiffuse.plus(adjustedSpecular);
+    private calculateAmbientLight(): RgbColor {
+        return this.ambientColor.scaleBy(this.ambientAmount); 
     }
 
-    private calculateSpecular(position: Point3, lightNormal: Vector3, surfaceNormal: Vector3, origin: Point3): number {
-        if (this.specularAmount <= 0) return 0; 
-        const reflected = this.reflect(lightNormal, surfaceNormal); 
-        const cameraNormal = origin.minus(position).normalize();
+    private calculateDiffuse(surfaceNormal: Vector3, lightResult: LightResult, position: Point3): RgbColor {
+        const amount = surfaceNormal.dot(lightResult.direction);
+        return lightResult.color.scaleBy(amount);
+    }
+
+    private calculateSpecular(
+        surfaceNormal: Vector3,
+        lightResult: LightResult,
+        cameraNormal: Vector3
+    ): RgbColor {
+        if (this.specularAmount <= 0) return RgbColor.Black();
+        const reflected = this.reflect(lightResult.direction, surfaceNormal);
         const ang = reflected.dot(cameraNormal);
-        if (ang < 0) return 0;
-        return Math.pow(ang, this.specularPower) * this.specularAmount;
+        if (ang < 0) return RgbColor.Black();
+        const amount = Math.pow(ang, this.specularPower) * this.specularAmount;
+        return lightResult.color.scaleBy(amount);
     }
 
+    private getObjectColor(): RgbColor {
+        return this.color;
+    }
+    
     private reflect(lightNormal: Vector3, surfaceNormal: Vector3) {
         const flipped = lightNormal.flip();
         const length = -surfaceNormal.dot(flipped) * 2; 
@@ -69,11 +109,4 @@ export class BasicMaterial implements IMaterial {
         const reflected = flipped.plus(move); 
         return reflected;
     }
-
-    private isInShadow(position: Point3, lightVector: Vector3): boolean {
-        const ray = new Ray(position, lightVector); 
-        const hit = this.rayTracer.trace(ray); 
-        return (hit !== null);
-    }
-
 }

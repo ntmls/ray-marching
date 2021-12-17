@@ -19,10 +19,6 @@ export class RgbColor {
         return this._blue; 
     }
 
-    scaleBy(multiplier: number): RgbColor {
-        return new RgbColor(this._red * multiplier, this._green * multiplier, this._blue * multiplier); 
-    }
-
     static mix(a: RgbColor, b: RgbColor, t: number): RgbColor {
         const invt = 1 - t;
         return new RgbColor(
@@ -73,6 +69,20 @@ export class RgbColor {
             this._red + color.red, 
             this._green + color.green, 
             this._blue + color._blue); 
+    }
+
+    scaleBy(multiplier: number): RgbColor {
+        return new RgbColor(
+            this._red * multiplier, 
+            this._green * multiplier, 
+            this._blue * multiplier); 
+    }
+
+    multiply(color: RgbColor) {
+        return new RgbColor(
+            this._red * color.red, 
+            this._green * color.green, 
+            this._blue * color._blue); 
     }
 
 }

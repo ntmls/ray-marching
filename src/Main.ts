@@ -8,6 +8,7 @@ import { RenderParabola } from "./Application/RenderParabola"
 import { RenderBasic3dScene } from "./Application/RenderBasic3dScene";
 import { BallScene } from "./Application/BallScene";
 import { Stopwatch } from "./Infrastructure/StopWatch";
+import { ChainScene } from "./Application/Artwork/ChainScene";
 
 export function main(): void {
     try {
@@ -32,6 +33,7 @@ function RenderSingleCore(canvas: HTMLCanvasElement) {
     const timer = new Stopwatch(); 
     var stats = new RayMarchStats();
     //var rendering = new RenderIntersectionOfDisks2d(); 
+    //var rendering = new RenderBasic3dScene(new ChainScene(), stats);
     var rendering = new RenderBasic3dScene(new BallScene(), stats);
     //var rendering = new RenderParabola(); 
     const renderProcess = new SingleCoreRenderProcess(canvas, rendering);

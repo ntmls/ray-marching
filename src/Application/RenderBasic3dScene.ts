@@ -7,14 +7,15 @@ import { IRendering } from "./IRendering";
 import { Point3 } from "../Domain/3d/Point3";
 import { Ray } from "../Domain/3d/Ray";
 import { IIterable } from "../Domain/IIterable";
-import { ISceneObject, ISdfSceneObject, ITraceableSceneObject } from "../Domain/SceneObject";
+import { IBoundedSceneObject, ISceneObject, ISdfSceneObject, ITraceableSceneObject } from "../Domain/SceneObject";
 import { LinkedList } from "../Domain/LinkedList";
 import { IRayTracer } from "../Domain/IRayTracer";
+import { ICamera } from "../Domain/Camera";
 
 export class RenderBasic3dScene implements IRendering, IIteration, IRayTracer {
-    readonly scene: IScene; 
+    private readonly scene: IScene; 
+    private camera!: ICamera; 
     private rayMarchStats: IRayMarchStats;
-    private rayOrigin: Point3;
     private surface!: ISurface;
     protected background = RgbColor.White();
 
@@ -27,19 +28,20 @@ export class RenderBasic3dScene implements IRendering, IIteration, IRayTracer {
     private objects!: IIterable<ISceneObject>; 
     private marchableObjects!: IIterable<ISdfSceneObject>; 
     private traceableObjects!: IIterable<ITraceableSceneObject>;
+    private boundedObjects!: IIterable<IBoundedSceneObject>;
 
     constructor (scene: IScene, rayMarchStats: IRayMarchStats) {
         this.scene = scene; 
         this.rayMarchStats = rayMarchStats;
-        this.rayOrigin = new Point3(0, 0, -2); // in world coordinates. Just behind the xy plane
     }
 
     initialize(surface: ISurface): void {
         this.surface = surface; 
         surface.setSize(1080, 720, 300);
+        this.camera = this.scene.setupCamera(); 
         this.objects = this.scene.build(this); 
-        this.marchableObjects = this.getMarchableObjects(); 
         this.traceableObjects = this.getTraceableObjects();
+        this.marchableObjects = this.getMarchableObjects(); 
     }
 
     render(): void {
@@ -47,39 +49,82 @@ export class RenderBasic3dScene implements IRendering, IIteration, IRayTracer {
     }
 
     onPixel(x: number, y: number): RgbColor {
-        const imagePoint = new Point3(x, y, 0); 
-        const rayDirection = imagePoint.minus(this.rayOrigin).normalize();
-        const ray = new Ray(this.rayOrigin, rayDirection); 
-        const hit = this.trace(ray);
+        const ray = this.camera.ray(x, y); 
+        const hit = this.trace(ray, this.maximumDistance);
         if (hit === null) return this.background; 
         return hit.getColor();
     }
 
-    trace(ray: Ray): RayHit | null {
-        let max = this.maximumDistance;
+    trace(ray: Ray, maxDistance: number): RayHit | null {
         let min = 0;
+        let max = maxDistance;
+        let currentHit: RayHit | null = null;
         const tracedHit = this.traceObjects(ray, this.traceableObjects); 
-        if (tracedHit) max = tracedHit.distanceFromOrigin;  
-        const marchedHit = this.marchRay(ray, this.marchableObjects, min, max); 
-        return this.minimumHit(marchedHit, tracedHit); 
+        if (tracedHit) {
+            if (tracedHit.distanceFromOrigin < maxDistance) {
+                max = tracedHit.distanceFromOrigin; 
+                currentHit = tracedHit; 
+            }
+        }
+        const objectsInBounds = this.pruneOutOfBounds(ray, this.marchableObjects);  
+        const marchedHit = this.marchRay(ray, objectsInBounds, min, max); 
+        return this.minimumHit(marchedHit, currentHit); 
     }
 
+    /* attempt to use over-relaxation to speed things up 
     private marchRay(ray: Ray, objects: IIterable<ISdfSceneObject>, min: number, max: number): RayHit | null {
         var totalDistance = min; 
         var step = 1;
         var currentPosition = ray.origin;
         if (totalDistance > 0) currentPosition = ray.PointAt(totalDistance); 
-        var sample: RayMarchSample; 
+        var relaxed = true;
+        var skipFactor = 1.2; 
+        var lastSample: RayMarchSample | null = null;
 
+        var sample =  this.sampleMarchableObjects(objects, currentPosition);
         while(true)  {
-            sample = this.sampleMarchableObjects(objects, currentPosition);
-            totalDistance += sample.distanceFromObject; 
+            if (lastSample !== null && relaxed) {
+                const distance = lastSample.distanceFromObject * skipFactor; 
+                if (distance > sample.distanceFromObject + lastSample.distanceFromObject) {
+                    // samples do not overlap
+                    relaxed = false; // stop skipping ahead and sample normally from the last good point
+                    sample = lastSample;
+                } else {
+                    // samples overlap
+                    totalDistance += distance;
+                }
+            } else {
+                totalDistance += sample.distanceFromObject; 
+            }
             currentPosition = ray.PointAt(totalDistance);
             if (sample.distanceFromObject < this.minimumDistance) {
                 return new RayHit(totalDistance, sample.object, ray); 
             } else if (step > this.maximumSteps || totalDistance > max) {
                 return null;
             }
+            lastSample = sample; 
+            sample =  this.sampleMarchableObjects(objects, currentPosition);
+            step++;
+        }
+    }
+    */
+
+    private marchRay(ray: Ray, objects: IIterable<ISdfSceneObject>, min: number, max: number): RayHit | null {
+        const minimumDistance = this.minimumDistance;
+        const maximumSteps = this.maximumSteps;
+        var totalDistance = min; 
+        var step = 1;
+        var currentPosition = ray.origin;
+        if (totalDistance > 0) currentPosition = ray.PointAt(totalDistance); 
+        
+        while(true)  {
+            const sample = this.sampleMarchableObjects(objects, currentPosition);
+            const distanceFromObject = sample.distanceFromObject; 
+            totalDistance += distanceFromObject; 
+            currentPosition = ray.PointAt(totalDistance);
+            if (distanceFromObject < minimumDistance) return new RayHit(totalDistance, sample.object, ray); 
+            if (totalDistance > max) return null;
+            if (step > maximumSteps) return null;
             step++;
         }
     }
@@ -99,7 +144,7 @@ export class RenderBasic3dScene implements IRendering, IIteration, IRayTracer {
         const iterator = this.objects.createIterator(); 
         while(iterator.hasNext) {
             const object = iterator.next();
-            if (object.type === 'TraceableSceneObject') {
+            if (object.isTraceableSceneObject) { //SceneObjectType.TraceableSceneObject) {
                 result.add(object as ITraceableSceneObject); 
             }
         }
@@ -111,11 +156,38 @@ export class RenderBasic3dScene implements IRendering, IIteration, IRayTracer {
         const iterator = this.objects.createIterator(); 
         while(iterator.hasNext) {
             const object = iterator.next();
-            if (object.type === 'MarchableSceneObject') {
+            if (object.isSdfSceneObject) { // SceneObjectType.SdfSceneObject) {
                 result.add(object as ISdfSceneObject); 
             }
         }
         return result;
+    }
+    
+    private pruneOutOfBounds(ray: Ray, objects: IIterable<ISdfSceneObject>): IIterable<ISdfSceneObject> {
+        const result = new LinkedList<ISdfSceneObject>();
+        const iterator = this.objects.createIterator(); 
+        while(iterator.hasNext) {
+            const object = iterator.next();
+            if (this.isInBounds(object, ray)) {
+                result.add(object as ISdfSceneObject); 
+            }
+        }
+        return result;
+    }
+
+    private isInBounds(object: ISceneObject, ray: Ray): boolean {
+        if (object.isBoundedSdfSceneObject) {
+            const boundObject = object as IBoundedSceneObject;
+            const hit = boundObject.bounds.trace(ray);
+            if (hit) {
+                //TODO min should be the min hit distance
+                return true;
+            }
+        } else if (object.isSdfSceneObject) { // SceneObjectType.SdfSceneObject) {
+            // TODO: min should be zero
+            return true; 
+        }
+        return false;
     }
 
     private traceObjects(ray: Ray, objects: IIterable<ITraceableSceneObject>): RayHit | null {
@@ -157,6 +229,7 @@ export class RenderBasic3dScene implements IRendering, IIteration, IRayTracer {
 }
 
 export interface IScene {
+    setupCamera(): ICamera;
     build(rayTracer: IRayTracer): IIterable<ISceneObject>; 
 }
 

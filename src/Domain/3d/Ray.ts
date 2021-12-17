@@ -25,4 +25,9 @@ export class Ray {
             this.origin.z + this.direction.z * distance
             ); 
     }
+
+    moveAhead(distance: number) {
+        return new Ray(this.PointAt(distance), this.direction); 
+    }
+
 }

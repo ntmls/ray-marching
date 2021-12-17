@@ -1,10 +1,9 @@
 import { IVector } from "../IVector";
 
 export class Vector3 implements IVector<Vector3> {
-
-    public readonly x: number;
-    public readonly y: number;
-    public readonly z: number;
+    readonly x: number;
+    readonly y: number;
+    readonly z: number;
 
     constructor(x: number, y: number, z: number) {
         this.x = x;
@@ -66,6 +65,13 @@ export class Vector3 implements IVector<Vector3> {
 
     dot(v: Vector3) {
         return this.x * v.x + this.y * v.y + this.z * v.z;    
+    }
+ 
+    cross(other: Vector3): Vector3 {
+        return new Vector3(
+            this.y * other.z - this.z * other.y,
+            this.z * other.x - this.x * other.z,
+            this.x * other.y - this.y * other.x);
     }
 
     flip(): Vector3 {
