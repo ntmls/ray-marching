@@ -1,27 +1,31 @@
 import { IRendering } from "../Application/IRendering";
+import { Point2 } from "../Domain/2d/Point2";
 import { IIteration } from "../Domain/IIteration";
+import { IPixelToWorldMapper } from "../Domain/IPixelToWorldMapper";
 import { ISurface } from "../Domain/ISurface";
-import { Range } from "../Domain/Range";
-import { RangeMap } from "../Domain/RangeMap";
+import { PixelToWorldMapper } from "./PixelToWorldMapper";
+
+type NewType = Point2;
 
 export class SingleCoreRenderProcess implements ISurface {
     private canvas: HTMLCanvasElement;
     private pixelsPerUnit: number = 0;
-    private _xs: Float32Array;
-    private _yMap: RangeMap; 
     private readonly _rendering: IRendering; 
+    private readonly pixelToWorldMapper = new PixelToWorldMapper();
 
     constructor(canvas: HTMLCanvasElement, rendering: IRendering) {
         if (canvas === undefined || canvas === null) throw new Error("'canvas' not defined.");
         this.canvas = canvas;
-        this._xs = new Float32Array(0); 
-        this._yMap = RangeMap.Identity();
         this._rendering = rendering; 
     }
 
     start() {
         this._rendering.initialize(this); 
         this._rendering.render(); 
+    }
+
+    getPixelToWorldMapper(): IPixelToWorldMapper {
+        return this.pixelToWorldMapper; 
     }
 
     iterate(iteration: IIteration): void {
@@ -31,17 +35,12 @@ export class SingleCoreRenderProcess implements ISurface {
         const context = this.canvas.getContext('2d'); 
         if (context === null) throw new Error("'context' is null"); 
         const data = context.getImageData(0, 0, width, height);
-        this.buildWorldCoordinateMap(width, height, this.pixelsPerUnit);
-        var xs = this._xs;
-        var yRangeMap = this._yMap;
-        var worldX = 0;
-        var worldY = Math.fround(-yRangeMap.map(0));
         var x = 0; 
         var y = 0;
         let len = data.data.length;
         var i = 0;
         while (i < len) {
-            let color = iteration.onPixel(worldX, worldY); 
+            let color = iteration.onPixel(x, y); 
             data.data[i] = Math.floor(color.red * 255);
             i = i + 1;
             data.data[i] = Math.floor(color.green * 255);
@@ -54,9 +53,7 @@ export class SingleCoreRenderProcess implements ISurface {
             if (x >= width) {
                 x = 0;
                 y = y + 1; 
-                worldY = Math.fround(-yRangeMap.map(y)); 
             }
-            worldX = xs[x]; 
         }
         context.putImageData(data, 0, 0);
     }
@@ -68,24 +65,8 @@ export class SingleCoreRenderProcess implements ISurface {
         this.canvas.width = width;
         this.canvas.height = height;
         this.pixelsPerUnit = pixelsPerUnit;
+        this.pixelToWorldMapper.buildWorldCoordinateMap(width, height, this.pixelsPerUnit);
     }
 
-    private buildWorldCoordinateMap(
-        imageWidth: number, 
-        imageHeight: number, 
-        pixelsPerUnit:  number): void {
-
-        let xPixelRange = new Range(0, imageWidth - 1);
-        let xValueRange = xPixelRange.ScaleBy(1/pixelsPerUnit).CenterAt(0);
-        let xRangeMap = RangeMap.FromRanges(xPixelRange, xValueRange); 
-
-        let yPixelRange = new Range(0, imageHeight - 1);
-        let yValueRange = yPixelRange.ScaleBy(xRangeMap.ratio).CenterAt(0);
-        this._yMap = RangeMap.FromRanges(yPixelRange, yValueRange);
-
-        this._xs = new Float32Array(imageWidth);
-        for(let x = 0; x <  imageWidth; x++) {
-            this._xs[x] = xRangeMap.map(x); 
-        }
-    }
 }
+

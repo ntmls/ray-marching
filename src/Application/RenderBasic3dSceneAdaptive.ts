@@ -10,16 +10,28 @@ import { IIterable } from "../Domain/IIterable";
 import { IBoundedSceneObject, ISceneObject, ISdfSceneObject, ITraceableSceneObject } from "../Domain/SceneObject";
 import { LinkedList } from "../Domain/LinkedList";
 import { IRayTracer } from "../Domain/IRayTracer";
-import { ICamera } from "../Domain/Camera";
-import { RayMarchSample } from "../Domain/RayMarchSample";
+import { BasicPixelSampler, ICamera, IPixelSampler } from "../Domain/Camera";
 import { IScene } from "../Domain/IScene";
+import { RayMarchSample } from "../Domain/RayMarchSample";
+import { IPixelToWorldMapper } from "../Domain/IPixelToWorldMapper";
+import { Point2 } from "../Domain/2d/Point2";
 
-export class RenderBasic3dScene implements IRendering, IIteration, IRayTracer {
+export interface IPixelRenderer {
+    onPixelSample(pixel: Point2): RgbColor 
+}
+
+export class RenderBasic3dSceneAdaptive implements IRendering, IIteration, IRayTracer, IPixelRenderer {
     private readonly scene: IScene; 
-    private camera!: ICamera; 
+    private camera!: ICamera;   
     private rayMarchStats: IRayMarchStats;
     private surface!: ISurface;
     protected background = RgbColor.White();
+
+    // adaptive sampling 
+    private readonly minSamples = 4;
+    private readonly maxSamples = 4;
+    private readonly threshold = .008; 
+    private readonly samples: Array<RgbColor>;
 
     // ray march settings
     private readonly minimumDistance: number = .01; 
@@ -30,17 +42,24 @@ export class RenderBasic3dScene implements IRendering, IIteration, IRayTracer {
     private objects!: IIterable<ISceneObject>; 
     private marchableObjects!: IIterable<ISdfSceneObject>; 
     private traceableObjects!: IIterable<ITraceableSceneObject>;
-    private boundedObjects!: IIterable<IBoundedSceneObject>;
+    
+    //private boundedObjects!: IIterable<IBoundedSceneObject>;
+    private _pixelSampler: IPixelSampler; 
+    private pixelToWorldMapper!: IPixelToWorldMapper; 
 
     constructor (scene: IScene, rayMarchStats: IRayMarchStats) {
         this.scene = scene; 
         this.rayMarchStats = rayMarchStats;
+        this._pixelSampler = new BasicPixelSampler();
+        this.samples = new Array<RgbColor>(this.maxSamples);
     }
 
     initialize(surface: ISurface): void {
         this.surface = surface; 
         surface.setSize(1080, 720, 300);
+        this.pixelToWorldMapper = surface.getPixelToWorldMapper(); 
         this.camera = this.scene.setupCamera(); 
+        this._pixelSampler = this.scene.setupPixelSampler(this._pixelSampler);
         this.objects = this.scene.build(this); 
         this.traceableObjects = this.getTraceableObjects();
         this.marchableObjects = this.getMarchableObjects(); 
@@ -49,11 +68,27 @@ export class RenderBasic3dScene implements IRendering, IIteration, IRayTracer {
     render(): void {
         this.surface.iterate(this);
     }
-
+    
     onPixel(x: number, y: number): RgbColor {
-        const ray = this.camera.ray(x, y); 
+        return this._pixelSampler.onPixel(new Point2(x, y), this); 
+    }
+
+    private calculateVariance(avg: RgbColor, count: number): number {
+        var sum = 0;
+        for (let i = 0; i < count; i++) {
+            const errorSquared = avg.distanceSquared(this.samples[i]); 
+            sum += errorSquared; 
+        }
+        return sum / count; 
+     }
+
+    onPixelSample(sample: Point2): RgbColor {
+        const world = this.pixelToWorldMapper.pixelToWorld(sample);
+        const ray = this.camera.ray(world.x, world.y);
         const hit = this.trace(ray, this.maximumDistance);
-        if (hit === null) return this.background; 
+        if (hit === null) {
+            return this.background;
+        }
         return hit.getColor();
     }
 
@@ -72,44 +107,6 @@ export class RenderBasic3dScene implements IRendering, IIteration, IRayTracer {
         const marchedHit = this.marchRay(ray, objectsInBounds, min, max); 
         return this.minimumHit(marchedHit, currentHit); 
     }
-
-    /* attempt to use over-relaxation to speed things up 
-    private marchRay(ray: Ray, objects: IIterable<ISdfSceneObject>, min: number, max: number): RayHit | null {
-        var totalDistance = min; 
-        var step = 1;
-        var currentPosition = ray.origin;
-        if (totalDistance > 0) currentPosition = ray.PointAt(totalDistance); 
-        var relaxed = true;
-        var skipFactor = 1.2; 
-        var lastSample: RayMarchSample | null = null;
-
-        var sample =  this.sampleMarchableObjects(objects, currentPosition);
-        while(true)  {
-            if (lastSample !== null && relaxed) {
-                const distance = lastSample.distanceFromObject * skipFactor; 
-                if (distance > sample.distanceFromObject + lastSample.distanceFromObject) {
-                    // samples do not overlap
-                    relaxed = false; // stop skipping ahead and sample normally from the last good point
-                    sample = lastSample;
-                } else {
-                    // samples overlap
-                    totalDistance += distance;
-                }
-            } else {
-                totalDistance += sample.distanceFromObject; 
-            }
-            currentPosition = ray.PointAt(totalDistance);
-            if (sample.distanceFromObject < this.minimumDistance) {
-                return new RayHit(totalDistance, sample.object, ray); 
-            } else if (step > this.maximumSteps || totalDistance > max) {
-                return null;
-            }
-            lastSample = sample; 
-            sample =  this.sampleMarchableObjects(objects, currentPosition);
-            step++;
-        }
-    }
-    */
 
     private marchRay(ray: Ray, objects: IIterable<ISdfSceneObject>, min: number, max: number): RayHit | null {
         const minimumDistance = this.minimumDistance;

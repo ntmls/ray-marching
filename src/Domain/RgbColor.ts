@@ -1,22 +1,12 @@
 export class RgbColor {
-    private _red: number;
-    private _green: number;
-    private _blue: number;
+    public readonly red: number;
+    public readonly green: number;
+    public readonly blue: number;
 
     constructor(red: number, green: number, blue: number) {
-        this._red = this.fix(red);
-        this._green = this.fix(green);
-        this._blue = this.fix(blue);
-    }
-
-    get red(): number {
-        return this._red;
-    }
-    get green(): number {
-        return this._green;
-    }
-    get blue(): number {
-        return this._blue; 
+        this.red = red;
+        this.green = green;
+        this.blue = blue;
     }
 
     static mix(a: RgbColor, b: RgbColor, t: number): RgbColor {
@@ -27,7 +17,14 @@ export class RgbColor {
             a.blue * t + b.blue * invt);
     }
 
-    private fix(value: number): number {
+    clamp(): RgbColor {
+        return new RgbColor(
+            RgbColor.fix(this.red), 
+            RgbColor.fix(this.green), 
+            RgbColor.fix(this.blue));
+    }    
+
+    private static fix(value: number): number {
         if (value < 0) return 0;
         if (value > 1) return 1;
         return value;
@@ -66,23 +63,30 @@ export class RgbColor {
 
     plus(color: RgbColor): RgbColor {
         return new RgbColor(
-            this._red + color.red, 
-            this._green + color.green, 
-            this._blue + color._blue); 
+            this.red + color.red, 
+            this.green + color.green, 
+            this.blue + color.blue); 
     }
 
     scaleBy(multiplier: number): RgbColor {
         return new RgbColor(
-            this._red * multiplier, 
-            this._green * multiplier, 
-            this._blue * multiplier); 
+            this.red * multiplier, 
+            this.green * multiplier, 
+            this.blue * multiplier); 
     }
 
     multiply(color: RgbColor) {
         return new RgbColor(
-            this._red * color.red, 
-            this._green * color.green, 
-            this._blue * color._blue); 
+            this.red * color.red, 
+            this.green * color.green, 
+            this.blue * color.blue); 
+    }
+
+    distanceSquared(other: RgbColor) {
+        const dr = this.red - other.red; 
+        const dg = this.green - other.green;
+        const db = this.blue - other.blue;
+        return dr * dr + dg * dg + db * db; 
     }
 
 }

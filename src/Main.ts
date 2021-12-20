@@ -9,12 +9,15 @@ import { RenderBasic3dScene } from "./Application/RenderBasic3dScene";
 import { BallScene } from "./Application/BallScene";
 import { Stopwatch } from "./Infrastructure/StopWatch";
 import { ChainScene } from "./Application/Artwork/ChainScene";
+import { RenderBasic3dSceneAdaptive } from "./Application/RenderBasic3dSceneAdaptive";
+import { RandomPixelSampler } from "./Domain/Camera";
+import { LinearCongruentGenerator } from "./Domain/Random";
 
 export function main(): void {
     try {
         const canvas = document.getElementById("surface") as HTMLCanvasElement;
-        //RenderMultiCore(canvas);
-        RenderSingleCore(canvas); 
+        RenderMultiCore(canvas);
+        //RenderSingleCore(canvas); 
 
     } catch(e) {
         console.log(e); 
@@ -24,7 +27,7 @@ main();
 
 function RenderMultiCore(canvas: HTMLCanvasElement) {
     const timer = new Stopwatch(); 
-    const renderProcess = new MultiCoreRenderProcess(canvas, new NoDiagnostics(), 5);
+    const renderProcess = new MultiCoreRenderProcess(canvas, new NoDiagnostics(), 8);
     renderProcess.start();
     console.log(timer.duration); 
 }
@@ -33,8 +36,8 @@ function RenderSingleCore(canvas: HTMLCanvasElement) {
     const timer = new Stopwatch(); 
     var stats = new RayMarchStats();
     //var rendering = new RenderIntersectionOfDisks2d(); 
-    //var rendering = new RenderBasic3dScene(new ChainScene(), stats);
-    var rendering = new RenderBasic3dScene(new BallScene(), stats);
+    //var rendering = new RenderBasic3dSceneAdaptive(new ChainScene(), stats);
+    var rendering = new RenderBasic3dSceneAdaptive(new BallScene(), stats);
     //var rendering = new RenderParabola(); 
     const renderProcess = new SingleCoreRenderProcess(canvas, rendering);
     renderProcess.start();;

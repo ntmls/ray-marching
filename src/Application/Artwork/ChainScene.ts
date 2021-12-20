@@ -2,13 +2,12 @@ import { Disk2d } from "../../Domain/2d/functions/sdf/Disk2d";
 import { Sdf2d } from "../../Domain/2d/functions/sdf/Sdf2d";
 import { Vector2 } from "../../Domain/2d/Vector2";
 import { GroundPlane } from "../../Domain/3d/functions/sdf/GroundPlane";
-import { Sdf3d, SdfTransformations } from "../../Domain/3d/functions/sdf/Sdf3d";
+import { SdfTransformations } from "../../Domain/3d/functions/sdf/Sdf3d";
 import { ITraceable } from "../../Domain/3d/ITraceable";
 import { Point3 } from "../../Domain/3d/Point3";
-import { Sphere } from "../../Domain/3d/Sphere";
 import { Vector3 } from "../../Domain/3d/Vector3";
 import { BasicMaterial } from "../../Domain/BasicMaterial";
-import { BasicCamera, ICamera } from "../../Domain/Camera";
+import { BasicCamera, ICamera, IPixelSampler, RandomPixelSampler, ThreeByThreePixelSampler } from "../../Domain/Camera";
 import { IIterable } from "../../Domain/IIterable";
 import { ILight } from "../../Domain/ILight";
 import { IMaterial } from "../../Domain/IMaterial";
@@ -18,8 +17,12 @@ import { IRandom, LinearCongruentGenerator } from "../../Domain/Random";
 import { RgbColor } from "../../Domain/RgbColor";
 import { BoundedSdfSceneObject, ISceneObject, SdfSceneObject } from "../../Domain/SceneObject";
 import { SphereAreaLight } from "../../Domain/SphereAreaLight";
-import { IScene } from "../RenderBasic3dScene";
 import { DirectionalLight } from "../../Domain/DirectionalLight";
+import { IScene } from "../../Domain/IScene";
+import { Bezier } from "../../Domain/Bezier";
+import { ChainLink } from "./ChainLink";
+import { ChainLinkProps } from "./ChainLinkProps";
+import { DistanceTimeMap } from "./DistanceTimeMap";
 
 export class ChainScene implements IScene {
 
@@ -37,7 +40,16 @@ export class ChainScene implements IScene {
         const lookAt = new Point3(0, 0, 0);
         const direction = lookAt.minus(origin).normalize();
         const up = new Vector3(0,0,1); 
-        return new BasicCamera(origin, direction, 2, up)
+        const camera = new BasicCamera(origin, direction, 2, up); 
+        //camera.pixelSampler = new RandomPixelSampler(this.random); 
+        return camera;
+    }
+
+    setupPixelSampler(defaultPixelSampler: IPixelSampler): IPixelSampler {
+        // return defaultPixelSampler;
+        //const pixelSampler = new RandomPixelSampler(this.random, 9); 
+        const pixelSampler = new ThreeByThreePixelSampler();
+        return pixelSampler; 
     }
 
     build(rayTracer: IRayTracer): IIterable<ISceneObject> {
@@ -50,8 +62,8 @@ export class ChainScene implements IScene {
 
     private createLights(rayTracer: IRayTracer) {
         
-        const keyLight = new SphereAreaLight(new Point3(50, 50, -50), 12, this.random, rayTracer);
-        keyLight.sampleCount = 16; 
+        const keyLight = new SphereAreaLight(new Point3(50, 50, 50), 12, this.random, rayTracer);
+        keyLight.sampleCount = 4; 
         this.lights.add(keyLight);
     
         const fillLight = new DirectionalLight(new Vector3(-1, 1, .25)); 
@@ -72,12 +84,22 @@ export class ChainScene implements IScene {
     }
 
     private createChainLinks(objects: LinkedList<ISceneObject>, rayTracer: IRayTracer): void {
+        //const linkCount = 11;
         const linkCount = 11;
         var links = this.createLinksArray(linkCount);
-        links = this.addRandomTwistToChain(links, 20); 
+        links = this.addRandomTwistToChain(links, 30); 
         const bounds = this.calculateBoundsForLinks(links, linkCount); 
         const material = this.createChainMaterial(rayTracer);
         this.addChainLinksToScene(objects, links, bounds, linkCount, material);
+    }
+    
+    private createBezier(links: ChainLink[], linkCount: number) {
+        const point1 = new Point3(-8, 0, 0);
+        const point4 = new Point3(.75 * linkCount, 0, 0);
+        const point2 = point1.lerp(point4, .33).moveZ(-2);
+        const point3 = point1.lerp(point4, .66).moveZ(-2);
+        const bezier = new Bezier(point1, point2, point3, point4); 
+        return bezier;
     }
 
     private createPlaneMaterial(rayTracer: IRayTracer): IMaterial {
@@ -98,16 +120,21 @@ export class ChainScene implements IScene {
         return material; 
     }
 
-    private createLinksArray(count: number): Array<ChainLink> {
-        const p1 = new Point3(-8, 0, 0);
-        const p2 = new Point3(-6.5, 0, 0);
-        const upRef = new Point3(0, 1, 0);
+    private createLinksArray(linkCount: number): Array<ChainLink> {
+        const upRef = new Vector3(0, 1, 0);
 
         const links = new Array<ChainLink>();
-        var chainLinkSdf = new ChainLink(this.chainLinkProps, p1, p2, upRef);
-        for (var i = 0; i < count; i++) {
+        const bezier = this.createBezier(links, linkCount);
+        const distanceTimeMap = new DistanceTimeMap(bezier, 100); 
+        var segments = distanceTimeMap.getEvenlySpacedPoints(11);
+
+        for (var i = 0; i < linkCount; i++) {
+            var chainLinkSdf = ChainLink.fromSegment(this.chainLinkProps, segments[i], upRef);
+            var isOdd = (i % 2 == 1)
+            if (isOdd) {
+                chainLinkSdf = chainLinkSdf.twist(Math.PI * .5); 
+            }
             links.push(chainLinkSdf);
-            chainLinkSdf = chainLinkSdf.nextLink();
         }
         return links;
     }
@@ -123,9 +150,7 @@ export class ChainScene implements IScene {
     private calculateBoundsForLinks(links: ChainLink[], linkCount: number) : Array<ITraceable> {
         const result = new Array<ITraceable>()
         for (var link of links) {
-            const bounds = new Sphere(
-                link.start.lerp(link.end, .5),
-                link.props.radius + link.props.thickness + link.span);
+            const bounds = link.calculateBoundingSphere()
             result.push(bounds);
         }
         return result
@@ -155,117 +180,4 @@ export class ChainScene implements IScene {
         return new Disk2d(new Vector2(0, 0), 1);
     }
 
-}
-
-export class ChainLink implements Sdf3d {
-    readonly start: Point3;
-    readonly end: Point3; 
-    readonly props: ChainLinkProps; 
-    readonly span: number;
-    private readonly upReference: Point3;
-
-    // precomputed values
-    private readonly iBasis: Vector3; 
-    private readonly jBasis: Vector3;
-    private readonly kBasis: Vector3; 
-
-    constructor(
-        props: ChainLinkProps, 
-        start: Point3, 
-        end: Point3, 
-        upReference: Point3) 
-        {
-
-        this.props = props; 
-        this.start = start; 
-        this.end = end;
-        this.upReference = upReference; 
-        
-        this.iBasis = end.minus(start).normalize();
-        const l = end.minus(start).magnitude; 
-        this.span = l * .5 - this.props.radius + this.props.thickness;
-        const temp1 = upReference.minus(start); 
-        const t = temp1.dot(this.iBasis);
-        const p = this.iBasis.scaleBy(t); 
-        this.jBasis = temp1.minus(p).normalize(); 
-        this.kBasis = this.iBasis.cross(this.jBasis); 
-    }
-
-    getDistance(position: Point3): number {
-        //const projected = this.projectToBasis(position).absolute();
-        const projected = this.projectToBasis(position);
-        const d1 = this.distanceXZ(projected.x, projected.z); 
-        return Math.sqrt(d1 * d1 + projected.y * projected.y) - this.props.thickness; 
-    }
-
-    nextLink(): ChainLink {
-        const delta = this.end.minus(this.start);
-        const newUp = this.upReference.rotateAbout(this.start, this.end, Math.PI * .5); 
-        return new ChainLink(
-            this.props, 
-            this.start.plus(delta), 
-            this.end.plus(delta), 
-            newUp.plus(delta)); 
-    }
-
-    twist(radians: number): ChainLink {
-        const newUp = this.upReference.rotateAbout(this.start, this.end, radians); 
-        return new ChainLink(
-            this.props, 
-            this.start,
-            this.end, 
-            newUp); 
-    }
-
-    private distanceXZ(x: number, z: number): number {
-        const abs = Math.abs; 
-        const radius = this.props.radius; 
-        if (x < this.span) return abs(radius - z); 
-        /*
-        const p = new Point2(x, z); 
-        return abs(radius - new Point2(this.span,  0).distanceFrom(p)); 
-        */
-        const dx = this.span - x;
-        const dy = 0 - z;
-        return abs(radius - Math.sqrt(dx * dx + dy * dy));
-    }
-
-    private projectToBasis(position: Point3) {
-        const abs = Math.abs; 
-
-        const startX = this.start.x;
-        const startY = this.start.y; 
-        const startZ = this.start.z;
-
-        const midX = position.x - startX + ((this.end.x - startX) * -.5);
-        const midY = position.y - startY + ((this.end.y - startY) * -.5);
-        const midZ = position.z - startZ + ((this.end.z - startZ) * -.5); 
-
-        return new Point3(
-            abs(this.iBasis.x * midX + this.iBasis.y * midY + this.iBasis.z * midZ), 
-            abs(this.jBasis.x * midX + this.jBasis.y * midY + this.jBasis.z * midZ), 
-            abs(this.kBasis.x * midX + this.kBasis.y * midY + this.kBasis.z * midZ), 
-        );
-
-        /* --- Un-optimized ----
-        const temp = this.end.minus(this.start).scaleBy(-.5); 
-        const newPos = position.minus(this.start).plus(temp); 
-        return new Point3(
-            this.iBasis.dot(newPos), 
-            this.jBasis.dot(newPos), 
-            this.kBasis.dot(newPos)
-        );
-        */
-
-    }
-}
-
-export class ChainLinkProps {
-    readonly radius: number;
-    readonly thickness: number;
-
-    constructor(thickness: number, radius: number) {
-        this.thickness = thickness; 
-        this.radius = radius;
-    }
 }

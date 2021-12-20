@@ -1,5 +1,4 @@
 export class MathUtility {
-
     private constructor() {};
 
     static clamp(min: number, max: number, x: number): number {
@@ -31,6 +30,11 @@ export class MathUtility {
     static smoothStep2(min: number, max: number, x: number) {
         x = this.clamp(0.0, 1.0, (x - min) / (max - min));
         return x * x * x * (x * (x * 6 - 15) + 10);
+    }
+
+    static lerp(value1: number, value2: number, time: number): number {
+        var timePrime = 1 - time;
+        return value1 * timePrime + value2 * time;
     }
 
 

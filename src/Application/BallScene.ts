@@ -1,5 +1,4 @@
 import { RgbColor } from "../Domain/RgbColor";
-import { IScene } from "./RenderBasic3dScene";
 import { GroundPlane } from "../Domain/3d/functions/sdf/GroundPlane"; 
 import { Point3 } from "../Domain/3d/Point3";
 import { Vector3 } from "../Domain/3d/Vector3";
@@ -10,11 +9,15 @@ import { LinkedList } from "../Domain/LinkedList";
 import { Sphere } from "../Domain/3d/Sphere";
 import { IRayTracer } from "../Domain/IRayTracer";
 import { IIterable } from "../Domain/IIterable";
-import { BasicCamera, ICamera } from "../Domain/Camera";
+import { BasicCamera, ICamera, IPixelSampler } from "../Domain/Camera";
 import { ILight } from "../Domain/ILight";
 import { PointLight } from "../Domain/PointLight";
+import { IScene } from "../Domain/IScene";
 
 export class BallScene implements IScene {
+    setupPixelSampler(defaultPixelSampler: IPixelSampler): IPixelSampler {
+        return defaultPixelSampler;
+    }
     
     setupCamera(): ICamera {
         const origin = new Point3(0, 0, -2.5); 

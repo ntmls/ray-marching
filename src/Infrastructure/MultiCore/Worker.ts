@@ -1,6 +1,8 @@
 
+import { ChainScene } from "../../Application/Artwork/ChainScene";
 import { BallScene } from "../../Application/BallScene";
 import { RenderBasic3dScene } from "../../Application/RenderBasic3dScene";
+import { RenderBasic3dSceneAdaptive } from "../../Application/RenderBasic3dSceneAdaptive";
 import { RayMarchStats } from "../../Domain/RayMarchStats";
 import { Message } from "./Message";
 import { Initialize, RenderLine } from "./RenderProcessMessages";
@@ -15,7 +17,8 @@ const stats = new RayMarchStats();
 //let renderer = new RenderNoise1d(surface); 
 //let renderer = new TestSawtoothRendering(surface); 
 
-let renderer = new RenderBasic3dScene(new BallScene(), stats); 
+let renderer = new RenderBasic3dSceneAdaptive(new BallScene(), stats); 
+//var renderer = new RenderBasic3dSceneAdaptive(new ChainScene(), stats);
 
 //let renderer = new RenderIntersectionOfDisks2d(surface); 
 //let renderer = new RenderRepeatOnY2d(surface);

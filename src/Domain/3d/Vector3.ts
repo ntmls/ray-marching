@@ -78,4 +78,19 @@ export class Vector3 implements IVector<Vector3> {
         return new Vector3(-this.x, -this.y, -this.z);
     }
 
+    rotateAbout(vector: Vector3, radians: number): Vector3 {
+        const normalizedVector = vector.normalize(); 
+        const t = normalizedVector.dot(this); 
+        const pointOfRotation = vector.scaleBy(t);
+        const basis1 = this.minus(pointOfRotation);
+        const basis1Norm = basis1.normalize()
+        const lengthAlongBasis1 = basis1.magnitude; 
+        const basis2 = basis1Norm.cross(normalizedVector); 
+        const u = lengthAlongBasis1 * Math.cos(radians)
+        const v = lengthAlongBasis1 * Math.sin(radians); 
+        const vect1 = basis1Norm.scaleBy(u);
+        const vect2 = basis2.scaleBy(v); 
+        return pointOfRotation.plus(vect1).plus(vect2); 
+    }
+
 }

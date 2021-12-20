@@ -90,8 +90,16 @@ export class Point3 implements IPoint<Point3, Vector3> {
             );
     }
 
-    MoveY(amount: number) {
+    moveX(amount: number) {
+        return new Point3(this.x + amount, this.y , this.z);
+    }
+
+    moveY(amount: number) {
         return new Point3(this.x, this.y + amount, this.z);
+    }
+
+    moveZ(amount: number) {
+        return new Point3(this.x, this.y, this.z + amount);
     }
 
     absolute() {
@@ -129,6 +137,10 @@ export class Point3 implements IPoint<Point3, Vector3> {
 
     static get origin(): Point3 {
         return new Point3(0, 0, 0); 
+    }
+
+    static fromVector(vector: Vector3): Point3 {
+        return new Point3(vector.x, vector.y, vector.z);
     }
     
 }
