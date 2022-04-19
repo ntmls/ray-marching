@@ -1,9 +1,7 @@
 import { RayHit } from "../RayHit";
 import { Sdf3d } from "./functions/sdf/Sdf3d";
+import { Point3, Ray, Vector3 } from "../Geometry3";
 import { ITraceable } from "./ITraceable";
-import { Point3 } from "./Point3";
-import { Ray } from "./Ray";
-import { Vector3 } from "./Vector3";
 
 export class Sphere implements ITraceable, Sdf3d {
     readonly center: Point3; 

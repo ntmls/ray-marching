@@ -1,8 +1,8 @@
 import { MathUtility } from "../../../MathUtility";
-import { Vector2 } from "../../Vector2";
 import { IRandom } from "../../../Random";
 import { Sdf2d } from "../sdf/Sdf2d";
 import { Assertions } from "../../../Assertions"; 
+import { Vector2 } from "../../../Geometry2.";
 
 export class Voronoi2 extends Sdf2d {
     private readonly grid: Array<Array<Vector2>>; 

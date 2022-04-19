@@ -1,6 +1,6 @@
 import { Sdf2d } from "../../../2d/functions/sdf/Sdf2d";
-import { Vector2 } from "../../../2d/Vector2";
-import { Point3 } from "../../Point3";
+import { Vector2 } from "../../../Geometry2.";
+import { Point3 } from "../../../Geometry3";
 import { Sdf3d } from "./Sdf3d";
 
 export class ExtrusionSdf implements Sdf3d {

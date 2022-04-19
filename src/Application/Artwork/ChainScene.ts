@@ -1,20 +1,17 @@
 import { Disk2d } from "../../Domain/2d/functions/sdf/Disk2d";
 import { Sdf2d } from "../../Domain/2d/functions/sdf/Sdf2d";
-import { Vector2 } from "../../Domain/2d/Vector2";
 import { GroundPlane } from "../../Domain/3d/functions/sdf/GroundPlane";
 import { SdfTransformations } from "../../Domain/3d/functions/sdf/Sdf3d";
 import { ITraceable } from "../../Domain/3d/ITraceable";
-import { Point3 } from "../../Domain/3d/Point3";
-import { Vector3 } from "../../Domain/3d/Vector3";
 import { BasicMaterial } from "../../Domain/BasicMaterial";
-import { BasicCamera, ICamera, IPixelSampler, RandomPixelSampler, ThreeByThreePixelSampler } from "../../Domain/Camera";
+import { BasicCamera, ICamera, IPixelSampler, ThreeByThreePixelSampler } from "../../Domain/Camera";
 import { IIterable } from "../../Domain/IIterable";
 import { ILight } from "../../Domain/ILight";
 import { IMaterial } from "../../Domain/IMaterial";
 import { IRayTracer } from "../../Domain/IRayTracer";
 import { LinkedList } from "../../Domain/LinkedList";
 import { IRandom, LinearCongruentGenerator } from "../../Domain/Random";
-import { RgbColor } from "../../Domain/RgbColor";
+import { RgbColor } from "../../Domain/Colors";
 import { BoundedSdfSceneObject, ISceneObject, SdfSceneObject } from "../../Domain/SceneObject";
 import { SphereAreaLight } from "../../Domain/SphereAreaLight";
 import { DirectionalLight } from "../../Domain/DirectionalLight";
@@ -23,6 +20,8 @@ import { Bezier } from "../../Domain/Bezier";
 import { ChainLink } from "./ChainLink";
 import { ChainLinkProps } from "./ChainLinkProps";
 import { DistanceTimeMap } from "./DistanceTimeMap";
+import { Vector2 } from "../../Domain/Geometry2.";
+import { Point3, Vector3 } from "../../Domain/Geometry3";
 
 export class ChainScene implements IScene {
 

@@ -1,4 +1,4 @@
-import { Ray } from "./3d/Ray";
+import { Ray } from "./Geometry3";
 import { RayHit } from "./RayHit";
 
 export interface IRayTracer {

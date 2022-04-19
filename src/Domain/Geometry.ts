@@ -11,3 +11,16 @@ export interface IPoint<TPoint, TVector> {
     floor(): TPoint; 
     fractional(): TPoint; 
 }
+
+export interface IVector<T> {
+    get magnitude(): number; 
+    get componentCount(): number;
+    component(index: number): number; 
+    normalize(): T;
+    minus(vector: T): T;
+    plus(vector: T): T;  
+    scaleBy(value: number): T; 
+    scaleByVector(vector: T): T; 
+    dot(vector: T): number;
+    flip(): T;
+}

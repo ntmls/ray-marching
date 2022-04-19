@@ -1,7 +1,6 @@
-import { Point3 } from "./3d/Point3";
-import { Ray } from "./3d/Ray";
 import { ISceneObject } from "./SceneObject";
-import { RgbColor } from "./RgbColor";
+import { RgbColor } from "./Colors";
+import { Ray, Point3 } from "./Geometry3";
 
 export class RayHit {
     readonly distanceFromOrigin: number;

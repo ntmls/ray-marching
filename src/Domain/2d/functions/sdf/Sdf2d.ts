@@ -1,8 +1,6 @@
+import { Function2d, Vector2 } from "../../../Geometry2.";
 
-import { Function2d } from "../../Function2d";
-import { Vector2 } from "../../Vector2";
-
-export abstract class Sdf2d extends Function2d {
+export abstract class Sdf2d implements Function2d {
     abstract getDistance(position: Vector2): number
 
     eval(vector: Vector2): number {

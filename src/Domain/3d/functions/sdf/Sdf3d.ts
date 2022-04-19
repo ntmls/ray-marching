@@ -1,6 +1,4 @@
-import { Point3, Point3Transform } from "../../Point3";
-import { Translation3 } from "../../Translation3";
-import { Vector3 } from "../../Vector3";
+import { Point3, Vector3, Translation3, Point3Transform } from "../../../Geometry3";
 
 export interface Sdf3d {
     getDistance(position: Point3): number

@@ -1,6 +1,6 @@
-import { Vector3 } from "./3d/Vector3";
 import { IRandom, LinearCongruentGenerator } from "./Random";
 import { ISampler } from "./ISampler";
+import { Vector3 } from "./Geometry3";
 
 
 export class UnitSphereSampler implements ISampler<Vector3> {

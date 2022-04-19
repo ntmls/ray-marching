@@ -1,11 +1,4 @@
-import { IRendering } from "../Application/IRendering";
-import { Point2 } from "../Domain/2d/Point2";
-import { IIteration } from "../Domain/IIteration";
-import { IPixelToWorldMapper } from "../Domain/IPixelToWorldMapper";
-import { ISurface } from "../Domain/ISurface";
-import { PixelToWorldMapper } from "./PixelToWorldMapper";
-
-type NewType = Point2;
+import { ISurface, IRendering, PixelToWorldMapper, IIteration } from "../Domain/Rendering";
 
 export class SingleCoreRenderProcess implements ISurface {
     private canvas: HTMLCanvasElement;
@@ -24,7 +17,7 @@ export class SingleCoreRenderProcess implements ISurface {
         this._rendering.render(); 
     }
 
-    getPixelToWorldMapper(): IPixelToWorldMapper {
+    getPixelToWorldMapper(): PixelToWorldMapper {
         return this.pixelToWorldMapper; 
     }
 

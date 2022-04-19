@@ -1,6 +1,5 @@
 import { RayHit } from "../RayHit";
-import { Ray } from "./Ray";
-import { Vector3 } from "./Vector3";
+import { Ray, Vector3 } from "../Geometry3";
 
 export interface ITraceable {
     trace(ray: Ray): number | null;

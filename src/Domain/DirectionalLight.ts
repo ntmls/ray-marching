@@ -1,7 +1,6 @@
-import { Point3 } from "./3d/Point3";
-import { Vector3 } from "./3d/Vector3";
+import { Vector3, Point3 } from "./Geometry3";
 import { ILight, LightResult } from "./ILight";
-import { RgbColor } from "./RgbColor";
+import { RgbColor } from "./Colors";
 
 export class DirectionalLight implements ILight {
 

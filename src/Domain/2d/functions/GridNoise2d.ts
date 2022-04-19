@@ -1,16 +1,13 @@
-import { Function2d } from "../Function2d";
 import { Assertions } from "../../Assertions";
 import { IRandom } from "../../Random";
 import { MathUtility } from "../../MathUtility";
-import { Vector2 } from "../Vector2";
+import { Function2d, Vector2 } from "../../Geometry2.";
 
-export class GridNoise2d extends Function2d {
+export class GridNoise2d implements Function2d {
     private readonly grid: Array<Float32Array>; 
     private readonly size: number;
 
-    constructor(size: number, randomNumberGenerator: IRandom) {
-        super();
-        
+    constructor(size: number, randomNumberGenerator: IRandom) {      
         Assertions.notNullOrUndefined(randomNumberGenerator, "randomNumberGenerator"); 
         Assertions.oneOrGreater(size, "size"); 
 

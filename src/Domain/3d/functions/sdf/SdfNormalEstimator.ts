@@ -1,5 +1,4 @@
-import { Point3 } from "../../Point3";
-import { Vector3 } from "../../Vector3";
+import { Vector3, Point3 } from "../../../Geometry3";
 import { Sdf3d } from "./Sdf3d";
 
 export class SdfNormalEstimator {

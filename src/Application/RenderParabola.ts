@@ -1,18 +1,13 @@
-import { Function2d } from "../Domain/2d/Function2d";
-import { Vector2 } from "../Domain/2d/Vector2";
-import { FunctionRenderer2d } from "./FunctionRenderer2d";
+import { Function2d, Vector2 } from "../Domain/Geometry2.";
+import { Render2dFunction } from "./Render2dFunction";
 
-export class RenderParabola extends FunctionRenderer2d {
+export class RenderParabola extends Render2dFunction {
     createFunction(): Function2d {
         return new Parabola();  
     }
 }
 
-class Parabola extends Function2d {
-
-    constructor() {
-        super();
-    }
+class Parabola implements Function2d {
 
     eval(vector: Vector2): number {
         const a = Math.abs(vector.x);

@@ -1,4 +1,4 @@
-import { Point3 } from "../../Point3";
+import { Point3 } from "../../../Geometry3";
 import { Sdf3d } from "./Sdf3d";
 
 export class ExpandSdf implements Sdf3d {

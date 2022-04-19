@@ -1,6 +1,5 @@
 import * as chai from 'chai';
-import { Point3 } from '../src/Domain/3d/Point3';
-import { Vector3 } from '../src/Domain/3d/Vector3';
+import { Point3, Vector3 } from '../src/Domain/Geometry3';
 
 const expect = chai.expect; 
 describe('Point3', () => {

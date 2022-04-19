@@ -1,27 +1,21 @@
-import { IIteration } from "../Domain/IIteration";
-import { ISurface } from "../Domain/ISurface";
-import { RgbColor } from "../Domain/RgbColor";
-import { IRendering } from "./IRendering";
-import { Function1d } from "../Domain/1d/Function1d"; 
-import { Contours } from "../Domain/1d/functions/Contours";
-import { Vector2 } from "../Domain/2d/Vector2"; 
-import { EmptyFunction2d, Function2d } from "../Domain/2d/Function2d";
+import { RgbColor } from "../Domain/Colors";
+import { Function2d, Vector2 } from "../Domain/Geometry2.";
+import { IIteration, IRendering, ISurface } from "../Domain/Rendering";
 
-export abstract class FunctionRenderer2d implements IRendering, IIteration {
+export abstract class Render2dFunction implements IRendering, IIteration {
 
     private surface!: ISurface;
-    protected function: Function2d;
+    protected function!: Function2d;
     private readonly green = RgbColor.Green();
     private readonly greenBlack = RgbColor.mix(RgbColor.Green(), RgbColor.Black(), .25);
     private readonly blue = RgbColor.Blue()
     private readonly blueBlack = RgbColor.mix(RgbColor.Blue(), RgbColor.Black(), .25);
     private readonly black = RgbColor.Black();
-    protected contourFunction: Function1d;
+    protected contourFunction: Contours;
 
     abstract createFunction(): Function2d; 
     
     constructor() {
-        this.function = new EmptyFunction2d();
         this.contourFunction = new Contours(1, .1);
     }   
 
@@ -34,16 +28,6 @@ export abstract class FunctionRenderer2d implements IRendering, IIteration {
     render(): void {
         this.surface.iterate(this);
     }
-
-    /*
-    majorContourTick(): number {
-        return 1;
-    }
-
-    minorContourTick(): number {
-       return .1;
-    }
-    */
 
     onPixel(x: number, y: number): RgbColor {
         const color = this.annotate(x, y);
@@ -64,4 +48,34 @@ export abstract class FunctionRenderer2d implements IRendering, IIteration {
         return null; 
     }
 
+}
+
+class Contours {
+    readonly minorTickCount: number;
+    readonly minorTickSize: number;
+    readonly majorTick: number;
+
+    constructor(majorTickSize: number, minorTickSize: number) {
+        this.majorTick = majorTickSize; 
+        this.minorTickSize = minorTickSize;
+        this.minorTickCount = majorTickSize / minorTickSize;
+    }
+
+    eval(x: number): number {
+        const major = this.majorFunction(x);
+        const minor = this.minorFunction(x);
+        return Math.max(this.majorFunction(x), this.minorFunction(x));
+    }
+
+    private majorFunction(x: number) {
+        const a = x * (1 / this.majorTick);
+        const frac = a - Math.floor(a); 
+        return Math.max(1 - Math.min(1 - frac ,frac) * 2 * this.minorTickCount,  0);
+    }
+
+    private minorFunction(x: number) {
+        const a = x * (1 / this.minorTickSize);
+        const frac = a - Math.floor(a); 
+        return Math.max(1 - Math.min(1 - frac ,frac) * 2,  0) * .5;
+    }
 }

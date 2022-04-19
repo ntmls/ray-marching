@@ -1,4 +1,4 @@
-import { Point3 } from "./3d/Point3";
+import { Point3 } from "./Geometry3";
 
 export class Bezier {
     readonly point1: Point3;

@@ -1,6 +1,5 @@
-import { Point3 } from "./3d/Point3";
-import { Vector3 } from "./3d/Vector3";
-import { RgbColor } from "./RgbColor";
+import { Point3, Vector3 } from "./Geometry3";
+import { RgbColor } from "./Colors";
 
 export interface ILight {
     get sampleCount(): number;

@@ -1,11 +1,8 @@
 import { IPixelRenderer } from "../Application/RenderBasic3dSceneAdaptive";
-import { Point2 } from "./2d/Point2";
-import { Point3 } from "./3d/Point3";
-import { Ray } from "./3d/Ray";
-import { Vector3 } from "./3d/Vector3";
-import { IIterator } from "./IIterable";
+import { Point2 } from "./Geometry2.";
+import { Ray, Point3, Vector3 } from "./Geometry3";
 import { IRandom } from "./Random";
-import { RgbColor } from "./RgbColor";
+import { RgbColor } from "./Colors";
 
 export interface ICamera {
     ray(x: number, y: number): Ray; 

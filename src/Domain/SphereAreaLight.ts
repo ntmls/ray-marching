@@ -1,12 +1,9 @@
-import { Point3 } from "./3d/Point3";
-import { Vector3 } from "./3d/Vector3";
-import { RgbColor } from "./RgbColor";
+import { RgbColor } from "./Colors";
 import { UnitSphereSampler } from "./UnitSphereSampler";
 import { ILight, LightResult } from "./ILight";
 import { IRandom } from "./Random";
 import { IRayTracer } from "./IRayTracer";
-import { Ray } from "./3d/Ray";
-
+import { Point3, Vector3, Ray } from "./Geometry3";
 
 export class SphereAreaLight implements ILight {
     private _color = RgbColor.White();

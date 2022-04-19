@@ -1,6 +1,5 @@
-import { Vector2 } from "../../Vector2";
+import { Segment2, Vector2 } from "../../../Geometry2.";
 import { Sdf2d } from "./Sdf2d";
-import { Segment2 } from "../../Segment2";
 
 export class Capsule2d extends Sdf2d {
 

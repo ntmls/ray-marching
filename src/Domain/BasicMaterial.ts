@@ -1,13 +1,11 @@
-import { Point3 } from "./3d/Point3";
-import { Ray } from "./3d/Ray";
-import { Vector3 } from "./3d/Vector3";
 import { RayHit } from "./RayHit";
 import { IMaterial } from "./IMaterial";
-import { RgbColor } from "./RgbColor";
+import { RgbColor } from "./Colors";
 import { IRayTracer } from "./IRayTracer";
 import { ILight, LightResult } from "./ILight";
 import { IIterable } from "./IIterable";
 import { LinkedList } from "./LinkedList";
+import { Vector3, Point3 } from "./Geometry3";
 
 export class BasicMaterial implements IMaterial {
     color = RgbColor.GrayScale(.5); 

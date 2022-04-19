@@ -1,10 +1,23 @@
-import { Point2 } from "../Domain/2d/Point2";
-import { IPixelToWorldMapper } from "../Domain/IPixelToWorldMapper";
-import { Range } from "../Domain/Range";
-import { RangeMap } from "../Domain/RangeMap";
+import { Point2 } from "./Geometry2.";
+import { RgbColor } from "./Colors";
+import { Range, RangeMap } from "../Domain/Range";
 
+export interface IRendering {
+    initialize(surface: ISurface): void; 
+    render(): void;
+}
 
-export class PixelToWorldMapper implements IPixelToWorldMapper {
+export interface ISurface {
+    setSize(width: number, height: number, pixelsPerUnit: number): void;
+    getPixelToWorldMapper() :PixelToWorldMapper; 
+    iterate(iteration: IIteration): void;
+}
+
+export interface IIteration {
+    onPixel(x: number, y: number): RgbColor
+}
+
+export class PixelToWorldMapper implements PixelToWorldMapper {
     private xRangeMap: RangeMap;
     private yRangeMap: RangeMap;
 
@@ -33,3 +46,4 @@ export class PixelToWorldMapper implements IPixelToWorldMapper {
         this.yRangeMap = RangeMap.FromRanges(yPixelRange, yValueRange);
     }
 }
+

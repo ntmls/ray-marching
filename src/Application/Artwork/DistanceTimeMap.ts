@@ -1,8 +1,6 @@
-import { Point3 } from "../../Domain/3d/Point3";
+import { Segment3, Point3 } from "../../Domain/Geometry3";
 import { Bezier } from "../../Domain/Bezier";
 import { MathUtility } from "../../Domain/MathUtility";
-import { Segment3 } from "../../Domain/3d/Segment3";
-
 
 export class DistanceTimeMap {
 

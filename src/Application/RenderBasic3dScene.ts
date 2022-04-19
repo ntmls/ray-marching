@@ -1,11 +1,6 @@
 import { RayHit } from "../Domain/RayHit";
-import { IIteration } from "../Domain/IIteration";
 import { IRayMarchStats } from "../Domain/IRayMarchStats";
-import { ISurface } from "../Domain/ISurface";
-import { RgbColor } from "../Domain/RgbColor";
-import { IRendering } from "./IRendering";
-import { Point3 } from "../Domain/3d/Point3";
-import { Ray } from "../Domain/3d/Ray";
+import { RgbColor } from "../Domain/Colors";
 import { IIterable } from "../Domain/IIterable";
 import { IBoundedSceneObject, ISceneObject, ISdfSceneObject, ITraceableSceneObject } from "../Domain/SceneObject";
 import { LinkedList } from "../Domain/LinkedList";
@@ -13,6 +8,8 @@ import { IRayTracer } from "../Domain/IRayTracer";
 import { ICamera } from "../Domain/Camera";
 import { RayMarchSample } from "../Domain/RayMarchSample";
 import { IScene } from "../Domain/IScene";
+import { Ray, Point3 } from "../Domain/Geometry3";
+import { IIteration, IRendering, ISurface } from "../Domain/Rendering";
 
 export class RenderBasic3dScene implements IRendering, IIteration, IRayTracer {
     private readonly scene: IScene; 

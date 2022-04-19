@@ -1,9 +1,7 @@
-import { IIteration } from "../Domain/IIteration";
-import { ISurface } from "../Domain/ISurface";
-import { RgbColor } from "../Domain/RgbColor";
-import { IRendering } from "./IRendering";
+import { RgbColor } from "../Domain/Colors";
 import { Sawtooth } from "../Domain/1d/functions/Sawtooth"; 
 import { Function1d } from "../Domain/1d/Function1d";
+import { IIteration, IRendering, ISurface } from "../Domain/Rendering";
 
 export class TestSawtoothRendering implements IRendering, IIteration {
     private readonly f: Function1d; 

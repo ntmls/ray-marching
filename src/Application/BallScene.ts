@@ -1,7 +1,5 @@
-import { RgbColor } from "../Domain/RgbColor";
+import { RgbColor } from "../Domain/Colors";
 import { GroundPlane } from "../Domain/3d/functions/sdf/GroundPlane"; 
-import { Point3 } from "../Domain/3d/Point3";
-import { Vector3 } from "../Domain/3d/Vector3";
 import { BasicMaterial } from "../Domain/BasicMaterial";
 import { SdfTransformations } from "../Domain/3d/functions/sdf/Sdf3d";
 import { ISceneObject, TraceableObject, SdfSceneObject } from "../Domain/SceneObject";
@@ -13,6 +11,7 @@ import { BasicCamera, ICamera, IPixelSampler } from "../Domain/Camera";
 import { ILight } from "../Domain/ILight";
 import { PointLight } from "../Domain/PointLight";
 import { IScene } from "../Domain/IScene";
+import { Point3, Vector3 } from "../Domain/Geometry3";
 
 export class BallScene implements IScene {
     setupPixelSampler(defaultPixelSampler: IPixelSampler): IPixelSampler {

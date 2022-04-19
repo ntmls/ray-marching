@@ -1,5 +1,5 @@
 import { RayHit } from "./RayHit";
-import { RgbColor } from "./RgbColor";
+import { RgbColor } from "./Colors";
 
 export interface IMaterial {
     getColor(hit: RayHit): RgbColor;

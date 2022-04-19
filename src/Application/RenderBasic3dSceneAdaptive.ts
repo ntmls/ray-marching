@@ -1,11 +1,6 @@
 import { RayHit } from "../Domain/RayHit";
-import { IIteration } from "../Domain/IIteration";
 import { IRayMarchStats } from "../Domain/IRayMarchStats";
-import { ISurface } from "../Domain/ISurface";
-import { RgbColor } from "../Domain/RgbColor";
-import { IRendering } from "./IRendering";
-import { Point3 } from "../Domain/3d/Point3";
-import { Ray } from "../Domain/3d/Ray";
+import { RgbColor } from "../Domain/Colors";
 import { IIterable } from "../Domain/IIterable";
 import { IBoundedSceneObject, ISceneObject, ISdfSceneObject, ITraceableSceneObject } from "../Domain/SceneObject";
 import { LinkedList } from "../Domain/LinkedList";
@@ -13,8 +8,9 @@ import { IRayTracer } from "../Domain/IRayTracer";
 import { BasicPixelSampler, ICamera, IPixelSampler } from "../Domain/Camera";
 import { IScene } from "../Domain/IScene";
 import { RayMarchSample } from "../Domain/RayMarchSample";
-import { IPixelToWorldMapper } from "../Domain/IPixelToWorldMapper";
-import { Point2 } from "../Domain/2d/Point2";
+import { Point2 } from "../Domain/Geometry2.";
+import { Ray, Point3 } from "../Domain/Geometry3";
+import { IIteration, ISurface, IRendering, PixelToWorldMapper } from "../Domain/Rendering";
 
 export interface IPixelRenderer {
     onPixelSample(pixel: Point2): RgbColor 
@@ -45,7 +41,7 @@ export class RenderBasic3dSceneAdaptive implements IRendering, IIteration, IRayT
     
     //private boundedObjects!: IIterable<IBoundedSceneObject>;
     private _pixelSampler: IPixelSampler; 
-    private pixelToWorldMapper!: IPixelToWorldMapper; 
+    private pixelToWorldMapper!: PixelToWorldMapper; 
 
     constructor (scene: IScene, rayMarchStats: IRayMarchStats) {
         this.scene = scene; 

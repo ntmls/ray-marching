@@ -1,8 +1,7 @@
 import { Assertions } from "../../Assertions";
-import { Function2d } from "../Function2d";
-import { Vector2 } from "../Vector2";
+import { Function2d, Vector2 } from "../../Geometry2.";
 
-export class Turbulence2d extends Function2d {
+export class Turbulence2d implements Function2d {
     readonly frequency: number;
     readonly octaves: number;
     private readonly noise: Function2d;
@@ -12,7 +11,6 @@ export class Turbulence2d extends Function2d {
         octaves: number, 
         noise: Function2d)  {
 
-        super();
         Assertions.notNullOrUndefined(noise, "noise"); 
         Assertions.oneOrGreater(frequency, "frequency");
         Assertions.oneOrGreater(octaves, "octaves");

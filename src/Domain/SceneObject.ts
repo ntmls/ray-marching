@@ -1,9 +1,7 @@
 import { Sdf3d } from "./3d/functions/sdf/Sdf3d";
 import { SdfNormalEstimator } from "./3d/functions/sdf/SdfNormalEstimator";
+import { Vector3, Ray, Point3 } from "./Geometry3";
 import { ITraceable } from "./3d/ITraceable";
-import { Point3 } from "./3d/Point3";
-import { Ray } from "./3d/Ray";
-import { Vector3 } from "./3d/Vector3";
 import { IMaterial } from "./IMaterial";
 import { RayHit } from "./RayHit";
 

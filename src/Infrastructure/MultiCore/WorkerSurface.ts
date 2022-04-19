@@ -1,7 +1,4 @@
-import { IIteration } from "../../Domain/IIteration";
-import { ISurface } from "../../Domain/ISurface";
-import { IPixelToWorldMapper } from "../../Domain/IPixelToWorldMapper";
-import { PixelToWorldMapper } from "../PixelToWorldMapper";
+import { ISurface, PixelToWorldMapper, IIteration } from "../../Domain/Rendering";
 
 export class WorkerSurface implements ISurface {
 
@@ -17,7 +14,7 @@ export class WorkerSurface implements ISurface {
         
     }
     
-    getPixelToWorldMapper(): IPixelToWorldMapper {
+    getPixelToWorldMapper(): PixelToWorldMapper {
         return this._pixelToWorldMapper; 
     }
 

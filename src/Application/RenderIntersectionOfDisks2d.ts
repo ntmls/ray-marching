@@ -1,12 +1,10 @@
-import { FunctionRenderer2d } from "./FunctionRenderer2d";
-import { RgbColor } from "../Domain/RgbColor";
-import { ISurface } from "../Domain/ISurface";
-import { Function2d } from "../Domain/2d/Function2d";
+import { RgbColor } from "../Domain/Colors";
 import { Disk2d } from "../Domain/2d/functions/sdf/Disk2d";
 import { IntersectionOfTwoDisks2d } from "../Domain/2d/functions/sdf/IntersectionOfTwoDisks2d";
-import { Vector2 } from "../Domain/2d/Vector2";
+import { Render2dFunction } from "./Render2dFunction";
+import { Function2d, Vector2 } from "../Domain/Geometry2.";
 
-export class RenderIntersectionOfDisks2d extends FunctionRenderer2d {
+export class RenderIntersectionOfDisks2d extends Render2dFunction {
 
     private concreteSdf!: IntersectionOfTwoDisks2d; 
 

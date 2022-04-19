@@ -1,15 +1,13 @@
 import { Assertions } from "../../Assertions";
 import { MathUtility } from "../../MathUtility";
-import { Function2d } from "../Function2d";
-import { Vector2 } from "../Vector2";
+import { Function2d, Vector2 } from "../../Geometry2.";
 
-export class ModulatedSineNoise2d extends Function2d {
+export class ModulatedSineNoise2d implements Function2d {
     
     private readonly scaleVector: Vector2; 
     private readonly scaleFactor: number
 
     constructor(scaleVector: Vector2, scaleFactor: number) {
-        super();
         Assertions.notNullOrUndefined(scaleVector, "scaleVector"); 
         Assertions.oneOrGreater(scaleFactor, "scaleFactor")
         this.scaleVector = scaleVector;

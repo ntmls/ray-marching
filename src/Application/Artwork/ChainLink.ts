@@ -1,9 +1,7 @@
 import { Sdf3d } from "../../Domain/3d/functions/sdf/Sdf3d";
-import { Point3 } from "../../Domain/3d/Point3";
-import { Vector3 } from "../../Domain/3d/Vector3";
-import { Segment3 } from "../../Domain/3d/Segment3";
 import { ChainLinkProps } from "./ChainLinkProps";
 import { Sphere } from "../../Domain/3d/Sphere";
+import { Point3, Vector3, Segment3 } from "../../Domain/Geometry3";
 
 export class ChainLink implements Sdf3d {
     readonly props: ChainLinkProps;

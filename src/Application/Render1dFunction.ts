@@ -1,10 +1,9 @@
-import { IIteration } from "../Domain/IIteration";
-import { ISurface } from "../Domain/ISurface";
-import { RgbColor } from "../Domain/RgbColor";
-import { IRendering } from "./IRendering";
-import { Function1d } from "../Domain/1d/Function1d";
 
-export abstract class FunctionRenderer1d implements IRendering, IIteration {
+import { RgbColor } from "../Domain/Colors";
+import { Function1d } from "../Domain/1d/Function1d";
+import { IIteration, IRendering, ISurface } from "../Domain/Rendering";
+
+export abstract class Render1dFunction implements IRendering, IIteration {
     private f!: Function1d; 
     private greaterThan = RgbColor.White();
     private lessThan = RgbColor.Black();
