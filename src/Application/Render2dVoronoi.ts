@@ -2,9 +2,9 @@ import { Voronoi2 } from "../Domain/2d/functions/sdf/Voronoi2";
 import { Function2d } from "../Domain/Geometry2.";
 import { LinearCongruentGenerator } from "../Domain/Random";
 import { RgbColor } from "../Domain/Colors";
-import { Render2dFunction } from "./Render2dFunction";
+import { Render2dFunctionContour } from "./Render2dFunctionContour";
 
-export class Render2dVoronoi extends Render2dFunction {
+export class Render2dVoronoi extends Render2dFunctionContour {
 
     createFunction(): Function2d {
         const cellSize = 1;

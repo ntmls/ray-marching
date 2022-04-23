@@ -1,7 +1,7 @@
 import { Function2d, Vector2 } from "../Domain/Geometry2.";
-import { Render2dFunction } from "./Render2dFunction";
+import { Render2dFunctionContour } from "./Render2dFunctionContour";
 
-export class RenderParabola extends Render2dFunction {
+export class RenderParabola extends Render2dFunctionContour {
     createFunction(): Function2d {
         return new Parabola();  
     }

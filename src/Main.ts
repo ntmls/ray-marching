@@ -12,6 +12,7 @@ import { ChainScene } from "./Application/Artwork/ChainScene";
 import { RenderBasic3dSceneAdaptive } from "./Application/RenderBasic3dSceneAdaptive";
 import { RandomPixelSampler } from "./Domain/Camera";
 import { LinearCongruentGenerator } from "./Domain/Random";
+import { RenderBox2d } from "./Application/RenderBox2d";
 
 export function main(): void {
     try {
@@ -39,6 +40,7 @@ function RenderSingleCore(canvas: HTMLCanvasElement) {
     //var rendering = new RenderBasic3dSceneAdaptive(new ChainScene(), stats);
     var rendering = new RenderBasic3dSceneAdaptive(new BallScene(), stats);
     //var rendering = new RenderParabola(); 
+    //var rendering = new RenderBox2d(500, 500, 100); 
     const renderProcess = new SingleCoreRenderProcess(canvas, rendering);
     renderProcess.start();;
     logStats(stats);

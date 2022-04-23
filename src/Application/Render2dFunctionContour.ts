@@ -1,8 +1,8 @@
 import { RgbColor } from "../Domain/Colors";
-import { Function2d, Vector2 } from "../Domain/Geometry2.";
-import { IIteration, IRendering, ISurface } from "../Domain/Rendering";
+import { Function2d, Point2, Vector2 } from "../Domain/Geometry2.";
+import { IIteration, IRendering, ISurface, PixelToWorldMapper } from "../Domain/Rendering";
 
-export abstract class Render2dFunction implements IRendering, IIteration {
+export abstract class Render2dFunctionContour implements IRendering, IIteration {
 
     private surface!: ISurface;
     protected function!: Function2d;
@@ -11,18 +11,27 @@ export abstract class Render2dFunction implements IRendering, IIteration {
     private readonly blue = RgbColor.Blue()
     private readonly blueBlack = RgbColor.mix(RgbColor.Blue(), RgbColor.Black(), .25);
     private readonly black = RgbColor.Black();
+    private readonly width: number;
+    private readonly height: number;
+    private readonly pixelsPerUnit: number;
+    private pixelToWorldMapper!: PixelToWorldMapper; 
     protected contourFunction: Contours;
 
     abstract createFunction(): Function2d; 
     
-    constructor() {
+    constructor(width: number, height: number, pixelsPerUnit: number) {
         this.contourFunction = new Contours(1, .1);
+        this.width = width;
+        this.height = height;
+        this.pixelsPerUnit = pixelsPerUnit; 
     }   
 
     initialize(surface: ISurface): void {
         this.surface = surface;
         this.function = this.createFunction();
-        this.surface.setSize(1080, 720, 1080 / 10);
+        this.pixelToWorldMapper = surface.getPixelToWorldMapper(); 
+        this.pixelToWorldMapper.buildWorldCoordinateMap(this.width, this.height, this.pixelsPerUnit);
+        this.surface.setSize(this.width, this.height, this.pixelsPerUnit);
     }
 
     render(): void {
@@ -32,8 +41,8 @@ export abstract class Render2dFunction implements IRendering, IIteration {
     onPixel(x: number, y: number): RgbColor {
         const color = this.annotate(x, y);
         if (color !== null) return color;  
-
-        const dist = this.function.eval(new Vector2(x, y));
+        const world = this.pixelToWorldMapper.pixelToWorld(new Point2(x, y)); 
+        const dist = this.function.eval(new Vector2(world.x, world.y));
         const t = this.contourFunction.eval(dist);
         if (dist < 0) {
             return RgbColor.mix(this.green, this.greenBlack, t); 
