@@ -51,9 +51,14 @@ export class RenderBasic3dSceneAdaptive implements IRendering, IIteration, IRayT
     }
 
     initialize(surface: ISurface): void {
+        const width = 1080;
+        const height = 720; 
+        const pixelsPerUnit = 300; 
+
         this.surface = surface; 
-        surface.setSize(1080, 720, 300);
-        this.pixelToWorldMapper = surface.getPixelToWorldMapper(); 
+        surface.setSize(width, height);
+        this.pixelToWorldMapper = new PixelToWorldMapper(); 
+        this.pixelToWorldMapper.buildWorldCoordinateMap(width, height, pixelsPerUnit);
         this.camera = this.scene.setupCamera(); 
         this._pixelSampler = this.scene.setupPixelSampler(this._pixelSampler);
         this.objects = this.scene.build(this); 

@@ -29,9 +29,9 @@ export abstract class Render2dFunctionContour implements IRendering, IIteration 
     initialize(surface: ISurface): void {
         this.surface = surface;
         this.function = this.createFunction();
-        this.pixelToWorldMapper = surface.getPixelToWorldMapper(); 
+        this.pixelToWorldMapper = new PixelToWorldMapper(); 
         this.pixelToWorldMapper.buildWorldCoordinateMap(this.width, this.height, this.pixelsPerUnit);
-        this.surface.setSize(this.width, this.height, this.pixelsPerUnit);
+        this.surface.setSize(this.width, this.height);
     }
 
     render(): void {

@@ -8,8 +8,7 @@ export interface IRendering {
 }
 
 export interface ISurface {
-    setSize(width: number, height: number, pixelsPerUnit: number): void;
-    getPixelToWorldMapper() :PixelToWorldMapper; 
+    setSize(width: number, height: number): void;
     iterate(iteration: IIteration): void;
 }
 

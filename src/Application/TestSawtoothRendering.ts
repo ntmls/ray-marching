@@ -15,7 +15,7 @@ export class TestSawtoothRendering implements IRendering, IIteration {
 
     initialize(surface: ISurface): void {
         this.surface = surface;
-        surface.setSize(1080, 720, 1080 / 10);
+        surface.setSize(1080, 720);
     }
 
     render(): void {

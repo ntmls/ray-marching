@@ -36,11 +36,7 @@ function RenderMultiCore(canvas: HTMLCanvasElement) {
 function RenderSingleCore(canvas: HTMLCanvasElement) {
     const timer = new Stopwatch(); 
     var stats = new RayMarchStats();
-    //var rendering = new RenderIntersectionOfDisks2d(); 
-    //var rendering = new RenderBasic3dSceneAdaptive(new ChainScene(), stats);
     var rendering = new RenderBasic3dSceneAdaptive(new BallScene(), stats);
-    //var rendering = new RenderParabola(); 
-    //var rendering = new RenderBox2d(500, 500, 100); 
     const renderProcess = new SingleCoreRenderProcess(canvas, rendering);
     renderProcess.start();;
     logStats(stats);

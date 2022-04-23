@@ -14,7 +14,7 @@ export abstract class Render1dFunction implements IRendering, IIteration {
     initialize(surface: ISurface): void {
         this.surface = surface;
         this.f = this.createFunction();
-        surface.setSize(1080, 720, 1080 / 10);
+        surface.setSize(1080, 720);
     }
 
     render(): void {

@@ -36,7 +36,7 @@ export class RenderBasic3dScene implements IRendering, IIteration, IRayTracer {
 
     initialize(surface: ISurface): void {
         this.surface = surface; 
-        surface.setSize(1080, 720, 300);
+        surface.setSize(1080, 720);
         this.camera = this.scene.setupCamera(); 
         this.objects = this.scene.build(this); 
         this.traceableObjects = this.getTraceableObjects();

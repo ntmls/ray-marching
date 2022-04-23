@@ -2,9 +2,7 @@ import { ISurface, IRendering, PixelToWorldMapper, IIteration } from "../Domain/
 
 export class SingleCoreRenderProcess implements ISurface {
     private canvas: HTMLCanvasElement;
-    private pixelsPerUnit: number = 0;
     private readonly _rendering: IRendering; 
-    private readonly pixelToWorldMapper = new PixelToWorldMapper();
 
     constructor(canvas: HTMLCanvasElement, rendering: IRendering) {
         if (canvas === undefined || canvas === null) throw new Error("'canvas' not defined.");
@@ -15,10 +13,6 @@ export class SingleCoreRenderProcess implements ISurface {
     start() {
         this._rendering.initialize(this); 
         this._rendering.render(); 
-    }
-
-    getPixelToWorldMapper(): PixelToWorldMapper {
-        return this.pixelToWorldMapper; 
     }
 
     iterate(iteration: IIteration): void {
@@ -51,14 +45,11 @@ export class SingleCoreRenderProcess implements ISurface {
         context.putImageData(data, 0, 0);
     }
 
-    setSize(width: number, height: number, pixelsPerUnit: number): void {
+    setSize(width: number, height: number): void {
         if (width === null || width === undefined || width === 0) throw new Error("'width' is required.");
         if (height === null || height === undefined || height === 0) throw new Error("'height' is required.");
-        if (pixelsPerUnit === null || pixelsPerUnit === undefined  || pixelsPerUnit === 0) throw new Error("'pixesPerUnit' is required.");
         this.canvas.width = width;
         this.canvas.height = height;
-        this.pixelsPerUnit = pixelsPerUnit;
-        this.pixelToWorldMapper.buildWorldCoordinateMap(width, height, this.pixelsPerUnit);
     }
 
 }
